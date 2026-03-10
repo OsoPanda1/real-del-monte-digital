@@ -1,96 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* RDM DIGITAL — Dark Territorial Mining Theme */
+    --background: 220 20% 7%;
+    --foreground: 45 10% 90%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 220 18% 10%;
+    --card-foreground: 45 10% 90%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 220 18% 12%;
+    --popover-foreground: 45 10% 90%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 43 96% 56%;
+    --primary-foreground: 220 20% 7%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 45 10% 85%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 15% 13%;
+    --muted-foreground: 220 10% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 174 62% 47%;
+    --accent-foreground: 220 20% 7%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 220 15% 18%;
+    --input: 220 15% 18%;
+    --ring: 43 96% 56%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* RDM Custom tokens */
+    --gold: 43 96% 56%;
+    --gold-dim: 43 70% 35%;
+    --silver: 220 15% 65%;
+    --copper: 25 80% 50%;
+    --ore: 280 60% 55%;
+    --teal: 174 62% 47%;
+    --teal-dim: 174 40% 25%;
+    --emerald: 152 60% 45%;
+    --surface-glow: 43 96% 56%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-background: 220 20% 5%;
+    --sidebar-foreground: 45 10% 80%;
+    --sidebar-primary: 43 96% 56%;
+    --sidebar-primary-foreground: 220 20% 7%;
+    --sidebar-accent: 220 15% 12%;
+    --sidebar-accent-foreground: 45 10% 85%;
+    --sidebar-border: 220 15% 15%;
+    --sidebar-ring: 43 96% 56%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Gradients */
+    --gradient-gold: linear-gradient(135deg, hsl(43 96% 56%), hsl(25 80% 50%));
+    --gradient-teal: linear-gradient(135deg, hsl(174 62% 47%), hsl(152 60% 45%));
+    --gradient-dark: linear-gradient(180deg, hsl(220 20% 7%), hsl(220 20% 4%));
+    --gradient-card: linear-gradient(145deg, hsl(220 18% 11%), hsl(220 18% 8%));
+    --gradient-ore: linear-gradient(135deg, hsl(280 60% 55%), hsl(320 70% 50%));
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    /* Shadows */
+    --shadow-gold: 0 0 30px -5px hsl(43 96% 56% / 0.15);
+    --shadow-teal: 0 0 30px -5px hsl(174 62% 47% / 0.15);
+    --shadow-card: 0 4px 24px -4px hsl(0 0% 0% / 0.4);
 
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
   }
 }
 
@@ -98,8 +77,84 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    background: var(--gradient-dark);
+    min-height: 100vh;
   }
+}
+
+@layer utilities {
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .text-gold {
+    color: hsl(var(--gold));
+  }
+  .text-silver {
+    color: hsl(var(--silver));
+  }
+  .text-teal {
+    color: hsl(var(--teal));
+  }
+  .text-copper {
+    color: hsl(var(--copper));
+  }
+  .text-ore {
+    color: hsl(var(--ore));
+  }
+  .bg-gold {
+    background-color: hsl(var(--gold));
+  }
+  .bg-teal {
+    background-color: hsl(var(--teal));
+  }
+  .gradient-gold {
+    background: var(--gradient-gold);
+  }
+  .gradient-teal {
+    background: var(--gradient-teal);
+  }
+  .gradient-ore {
+    background: var(--gradient-ore);
+  }
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+  .shadow-gold {
+    box-shadow: var(--shadow-gold);
+  }
+  .shadow-teal {
+    box-shadow: var(--shadow-teal);
+  }
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  .glow-gold {
+    box-shadow: 0 0 20px hsl(var(--gold) / 0.3), 0 0 60px hsl(var(--gold) / 0.1);
+  }
+  .glow-teal {
+    box-shadow: 0 0 20px hsl(var(--teal) / 0.3), 0 0 60px hsl(var(--teal) / 0.1);
+  }
+  .border-glow-gold {
+    border-color: hsl(var(--gold) / 0.3);
+  }
+  .border-glow-teal {
+    border-color: hsl(var(--teal) / 0.3);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(220 20% 7%);
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(220 15% 20%);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(43 96% 56% / 0.5);
 }
