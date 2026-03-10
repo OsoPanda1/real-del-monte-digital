@@ -35,7 +35,7 @@ const item = {
 
 export default function GamePortal() {
   return (
-    <div className="space-y-8 p-8 max-w-[1400px]">
+    <div className="space-y-8 max-w-[1400px]">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-muted-foreground mb-2">
           Gamificación Territorial
