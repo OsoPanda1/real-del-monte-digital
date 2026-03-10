@@ -7,12 +7,14 @@ import {
   Bot,
   ChevronLeft,
   ChevronRight,
+  Sparkles,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
-  { path: "/", label: "Landing", icon: Mountain },
+  { path: "/", label: "Inicio", icon: Mountain },
   { path: "/dashboard", label: "Dashboard CEO", icon: LayoutDashboard },
   { path: "/game", label: "Veta Soberana", icon: Pickaxe },
   { path: "/b2b", label: "Portal B2B", icon: Store },
@@ -26,25 +28,36 @@ export function AppSidebar() {
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 z-50 flex h-screen flex-col border-r border-border bg-sidebar transition-all duration-300",
-        collapsed ? "w-16" : "w-56"
+        "fixed left-0 top-0 z-50 flex h-screen flex-col transition-all duration-500 ease-out",
+        "bg-sidebar/80 backdrop-blur-2xl border-r border-sidebar-border",
+        collapsed ? "w-[72px]" : "w-60"
       )}
     >
       {/* Logo */}
-      <div className="flex h-16 items-center gap-2 border-b border-border px-4">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md gradient-gold">
-          <Mountain className="h-4 w-4 text-primary-foreground" />
-        </div>
-        {!collapsed && (
-          <div className="overflow-hidden">
-            <p className="text-sm font-bold text-gold truncate">RDM DIGITAL</p>
-            <p className="text-[10px] text-muted-foreground truncate">TAMV MD-X5</p>
-          </div>
-        )}
+      <div className="flex h-20 items-center gap-3 px-5 border-b border-sidebar-border/50">
+        <motion.div
+          whileHover={{ rotate: 5, scale: 1.05 }}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl gradient-gold shadow-gold"
+        >
+          <Mountain className="h-5 w-5 text-primary-foreground" />
+        </motion.div>
+        <AnimatePresence>
+          {!collapsed && (
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              className="overflow-hidden"
+            >
+              <p className="text-sm font-display font-bold text-gradient-gold tracking-wide">RDM DIGITAL</p>
+              <p className="text-[9px] font-mono text-muted-foreground tracking-widest uppercase">TAMV MD-X5</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 space-y-1 p-2">
+      <nav className="flex-1 space-y-1 p-3 mt-2">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
@@ -52,26 +65,52 @@ export function AppSidebar() {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                "group relative flex items-center gap-3 rounded-xl px-3.5 py-3 text-[13px] font-medium transition-all duration-300",
                 isActive
-                  ? "gradient-gold text-primary-foreground shadow-gold"
-                  : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-gold"
+                  ? "text-primary-foreground"
+                  : "text-sidebar-foreground hover:text-foreground"
               )}
             >
-              <item.icon className="h-4 w-4 shrink-0" />
-              {!collapsed && <span className="truncate">{item.label}</span>}
+              {/* Active background */}
+              {isActive && (
+                <motion.div
+                  layoutId="activeNav"
+                  className="absolute inset-0 rounded-xl gradient-gold shadow-gold"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
+              {/* Hover background */}
+              {!isActive && (
+                <div className="absolute inset-0 rounded-xl bg-sidebar-accent/0 group-hover:bg-sidebar-accent/80 transition-colors duration-300" />
+              )}
+              <item.icon className="relative z-10 h-[18px] w-[18px] shrink-0" />
+              {!collapsed && <span className="relative z-10 truncate">{item.label}</span>}
             </NavLink>
           );
         })}
       </nav>
 
-      {/* Collapse toggle */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="flex h-10 items-center justify-center border-t border-border text-muted-foreground hover:text-gold transition-colors"
-      >
-        {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-      </button>
+      {/* Bottom section */}
+      <div className="p-3 space-y-2 border-t border-sidebar-border/50">
+        {!collapsed && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center gap-2 rounded-xl glass-gold p-3"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-gold shrink-0" />
+            <p className="text-[10px] text-muted-foreground leading-tight">
+              Instancia soberana activa
+            </p>
+          </motion.div>
+        )}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="flex h-9 w-full items-center justify-center rounded-xl text-muted-foreground hover:text-gold hover:bg-sidebar-accent transition-all duration-300"
+        >
+          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        </button>
+      </div>
     </aside>
   );
 }

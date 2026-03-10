@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Pickaxe, Gem, Trophy, Zap, ShieldCheck, Crown } from "lucide-react";
+import { Pickaxe, Gem, Trophy, Zap, ShieldCheck, Crown, Sparkles, Star } from "lucide-react";
 import { mineralTypes, leaderboard, miningActivityData } from "@/data/mockData";
 import { MiniChart } from "@/components/rdm/MiniChart";
 import { cn } from "@/lib/utils";
@@ -10,79 +10,116 @@ const mineralColors: Record<string, string> = {
   gold: "text-gold",
 };
 
-const rarityBg: Record<string, string> = {
-  "Común": "bg-secondary",
-  "Frecuente": "bg-gold-dim/10 border border-gold-dim/20",
-  "Raro": "bg-silver/5 border border-silver/20",
-  "Épico": "bg-gold/10 border border-gold/30 glow-gold",
+const rarityGradients: Record<string, string> = {
+  "Común": "from-secondary/50 to-secondary/20",
+  "Frecuente": "from-gold-dim/15 to-gold-dim/5",
+  "Raro": "from-electric/10 to-electric/5",
+  "Épico": "from-gold/15 to-gold/5",
+};
+
+const rarityBorder: Record<string, string> = {
+  "Común": "border-border",
+  "Frecuente": "border-gold-dim/20",
+  "Raro": "border-electric/25",
+  "Épico": "border-gold/30",
+};
+
+const container = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.08 } },
+};
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const } },
 };
 
 export default function GamePortal() {
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-8 p-8 max-w-[1400px]">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <h1 className="text-2xl font-bold">Veta Soberana</h1>
-        <p className="text-sm text-muted-foreground">Gamificación territorial — Minería Digital de Real del Monte</p>
+        <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-muted-foreground mb-2">
+          Gamificación Territorial
+        </p>
+        <h1 className="text-4xl font-display font-bold tracking-tight">Veta Soberana</h1>
+        <p className="text-sm font-body text-muted-foreground mt-1">Minería Digital geolocalizada de Real del Monte</p>
       </motion.div>
 
       {/* Mineral cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <motion.div variants={container} initial="hidden" animate="show" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {mineralTypes.map((mineral, i) => (
           <motion.div
             key={mineral.name}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: i * 0.1 }}
-            className={cn("rounded-xl p-5 text-center", rarityBg[mineral.rarity])}
+            variants={item}
+            whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.2 } }}
+            className={cn(
+              "relative overflow-hidden rounded-2xl border p-6 text-center bg-gradient-to-b cursor-pointer transition-shadow duration-300",
+              rarityGradients[mineral.rarity],
+              rarityBorder[mineral.rarity],
+              mineral.rarity === "Épico" && "glow-gold"
+            )}
           >
-            <Gem className={cn("mx-auto h-8 w-8 mb-2", mineralColors[mineral.color] || "text-foreground")} />
-            <h3 className="font-bold">{mineral.name}</h3>
-            <p className="text-xs text-muted-foreground">{mineral.rarity}</p>
-            <div className="mt-3 space-y-1 text-xs font-mono">
-              <p>Spawn: {mineral.spawnRate}%</p>
-              <p className="text-gold">Valor: {mineral.value} pts</p>
+            {mineral.rarity === "Épico" && (
+              <Sparkles className="absolute top-3 right-3 h-4 w-4 text-gold/40 animate-pulse-gold" />
+            )}
+            <div className={cn(
+              "mx-auto flex h-16 w-16 items-center justify-center rounded-2xl mb-4",
+              mineral.rarity === "Épico" ? "bg-gold/15" : "bg-secondary/40"
+            )}>
+              <Gem className={cn("h-8 w-8", mineralColors[mineral.color] || "text-foreground")} />
+            </div>
+            <h3 className="text-xl font-display font-bold">{mineral.name}</h3>
+            <p className="text-[11px] font-body text-muted-foreground mt-1">{mineral.rarity}</p>
+            <div className="mt-4 space-y-1.5 text-[11px] font-mono">
+              <p className="text-muted-foreground">Spawn: {mineral.spawnRate}%</p>
+              <p className="text-gold font-semibold">Valor: {mineral.value} pts</p>
             </div>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-5 lg:grid-cols-2">
         {/* Power-ups */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="gradient-card rounded-xl border border-border p-5 shadow-card"
+          className="glass rounded-2xl p-6"
         >
-          <h3 className="mb-4 text-sm font-semibold flex items-center gap-2">
-            <Zap className="h-4 w-4 text-gold" /> Power-Ups
+          <h3 className="mb-5 font-display text-xl font-bold flex items-center gap-2">
+            <Zap className="h-5 w-5 text-gold" /> Power-Ups
           </h3>
           <div className="space-y-3">
-            <div className="flex items-center justify-between rounded-lg bg-secondary/50 p-4">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">⛏️</span>
+            <div className="flex items-center justify-between rounded-xl bg-secondary/30 p-5 hover:bg-secondary/40 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-copper/10">
+                  <span className="text-2xl">⛏️</span>
+                </div>
                 <div>
-                  <p className="font-semibold">Pico Cornish</p>
-                  <p className="text-xs text-muted-foreground">x2 velocidad de minería</p>
+                  <p className="font-body font-semibold">Pico Cornish</p>
+                  <p className="text-[11px] font-body text-muted-foreground">x2 velocidad de minería</p>
                 </div>
               </div>
-              <span className="font-mono font-bold text-gold">$100 MXN</span>
+              <span className="font-mono font-bold text-gold text-lg">$100</span>
             </div>
-            <div className="flex items-center justify-between rounded-lg bg-secondary/50 p-4">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🔧</span>
+            <div className="flex items-center justify-between rounded-xl bg-secondary/30 p-5 hover:bg-secondary/40 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-electric/10">
+                  <span className="text-2xl">🔧</span>
+                </div>
                 <div>
-                  <p className="font-semibold">Taladro Neumático</p>
-                  <p className="text-xs text-muted-foreground">x4 potencia + minerales raros</p>
+                  <p className="font-body font-semibold">Taladro Neumático</p>
+                  <p className="text-[11px] font-body text-muted-foreground">x4 potencia + minerales raros</p>
                 </div>
               </div>
-              <span className="font-mono font-bold text-gold">$200 MXN</span>
+              <span className="font-mono font-bold text-gold text-lg">$200</span>
             </div>
-            <div className="mt-3 flex items-center gap-2 rounded-lg border border-glow-gold bg-gold/5 p-3">
-              <Crown className="h-4 w-4 text-gold" />
-              <div>
-                <p className="text-sm font-semibold text-gold">Premium RDM</p>
-                <p className="text-xs text-muted-foreground">Minería remota + bolsa de premios · $100 MXN/mes</p>
+            <div className="mt-4 glass-gold rounded-2xl p-5">
+              <div className="flex items-center gap-3">
+                <Crown className="h-5 w-5 text-gold" />
+                <div>
+                  <p className="font-display text-lg font-bold text-gradient-gold">Premium RDM</p>
+                  <p className="text-[11px] font-body text-muted-foreground">Minería remota + bolsa de premios · $100 MXN/mes</p>
+                </div>
               </div>
             </div>
           </div>
@@ -90,36 +127,41 @@ export default function GamePortal() {
 
         {/* Leaderboard */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="gradient-card rounded-xl border border-border p-5 shadow-card"
+          className="glass rounded-2xl p-6"
         >
-          <h3 className="mb-4 text-sm font-semibold flex items-center gap-2">
-            <Trophy className="h-4 w-4 text-gold" /> Ranking de Mineros
+          <h3 className="mb-5 font-display text-xl font-bold flex items-center gap-2">
+            <Trophy className="h-5 w-5 text-gold" /> Ranking de Mineros
           </h3>
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {leaderboard.map((player) => (
-              <div
+              <motion.div
                 key={player.rank}
+                whileHover={{ x: 4, transition: { duration: 0.15 } }}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-4 py-3",
-                  player.rank === 1 ? "bg-gold/10 border border-gold/20" : "bg-secondary/50"
+                  "flex items-center gap-4 rounded-xl px-5 py-4 transition-colors",
+                  player.rank === 1 ? "glass-gold" : "bg-secondary/20 hover:bg-secondary/30"
                 )}
               >
                 <span className={cn(
-                  "flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold",
-                  player.rank === 1 ? "gradient-gold text-primary-foreground" : "bg-secondary text-muted-foreground"
+                  "flex h-9 w-9 items-center justify-center rounded-xl text-sm font-bold font-mono",
+                  player.rank === 1 ? "gradient-gold text-primary-foreground shadow-gold" :
+                  player.rank <= 3 ? "bg-secondary text-gold" : "bg-secondary text-muted-foreground"
                 )}>
                   {player.rank}
                 </span>
-                <span className="text-lg">{player.avatar}</span>
+                <span className="text-xl">{player.avatar}</span>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold">{player.name}</p>
-                  <p className="text-xs text-muted-foreground">Nivel {player.level}</p>
+                  <p className="text-sm font-body font-semibold">{player.name}</p>
+                  <p className="text-[10px] font-body text-muted-foreground">Nivel {player.level}</p>
                 </div>
-                <span className="font-mono text-sm font-bold text-gold">{player.minerals.toLocaleString()}</span>
-              </div>
+                <div className="text-right">
+                  <span className="font-mono text-sm font-bold text-gold">{player.minerals.toLocaleString()}</span>
+                  <p className="text-[9px] font-mono text-muted-foreground">minerales</p>
+                </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>
@@ -127,16 +169,16 @@ export default function GamePortal() {
 
       {/* Mining activity */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="gradient-card rounded-xl border border-border p-5 shadow-card"
+        className="glass rounded-2xl p-6"
       >
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-sm font-semibold">Actividad Minera en Tiempo Real</h3>
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-teal" />
-            <span className="text-xs text-muted-foreground font-mono">Antifraude activo</span>
+        <div className="mb-5 flex items-center justify-between">
+          <h3 className="text-xl font-display font-bold">Actividad Minera en Tiempo Real</h3>
+          <div className="flex items-center gap-2.5 glass-teal rounded-xl px-4 py-2">
+            <ShieldCheck className="h-3.5 w-3.5 text-teal" />
+            <span className="text-[10px] font-mono text-teal font-semibold tracking-wider">ANTIFRAUDE ACTIVO</span>
           </div>
         </div>
         <MiniChart data={miningActivityData} color="hsl(25, 80%, 50%)" height={200} showAxis />

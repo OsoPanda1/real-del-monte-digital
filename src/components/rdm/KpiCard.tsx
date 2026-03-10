@@ -8,23 +8,25 @@ interface KpiCardProps {
   change?: string;
   changeType?: "positive" | "negative" | "neutral";
   icon: LucideIcon;
-  variant?: "gold" | "teal" | "default" | "copper" | "ore";
+  variant?: "gold" | "teal" | "default" | "copper" | "ore" | "electric";
 }
 
 const variantStyles = {
-  gold: "border-glow-gold shadow-gold",
-  teal: "border-glow-teal shadow-teal",
-  copper: "border-copper/20",
-  ore: "border-ore/20",
-  default: "",
+  gold: "glass-gold shadow-gold",
+  teal: "glass-teal shadow-teal",
+  copper: "glass border-copper/15",
+  ore: "glass border-ore/15",
+  electric: "glass border-glow-electric shadow-electric",
+  default: "glass",
 };
 
 const iconVariants = {
-  gold: "text-gold",
-  teal: "text-teal",
-  copper: "text-copper",
-  ore: "text-ore",
-  default: "text-muted-foreground",
+  gold: "text-gold bg-gold/10",
+  teal: "text-teal bg-teal/10",
+  copper: "text-copper bg-copper/10",
+  ore: "text-ore bg-ore/10",
+  electric: "text-electric bg-electric/10",
+  default: "text-muted-foreground bg-secondary",
 };
 
 export function KpiCard({ title, value, change, changeType = "neutral", icon: Icon, variant = "default" }: KpiCardProps) {
@@ -32,22 +34,23 @@ export function KpiCard({ title, value, change, changeType = "neutral", icon: Ic
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
       className={cn(
-        "gradient-card rounded-xl border p-5 shadow-card",
+        "relative overflow-hidden rounded-2xl p-6 transition-all duration-300",
         variantStyles[variant]
       )}
     >
       <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        <div className="space-y-2">
+          <p className="text-[11px] font-body font-semibold uppercase tracking-[0.15em] text-muted-foreground">
             {title}
           </p>
-          <p className="text-2xl font-bold tracking-tight">{value}</p>
+          <p className="text-3xl font-display font-bold tracking-tight">{value}</p>
           {change && (
             <p
               className={cn(
-                "text-xs font-mono font-medium",
+                "text-[11px] font-mono font-medium",
                 changeType === "positive" && "text-emerald",
                 changeType === "negative" && "text-destructive",
                 changeType === "neutral" && "text-muted-foreground"
@@ -57,7 +60,7 @@ export function KpiCard({ title, value, change, changeType = "neutral", icon: Ic
             </p>
           )}
         </div>
-        <div className={cn("rounded-lg bg-secondary p-2.5", iconVariants[variant])}>
+        <div className={cn("rounded-xl p-3", iconVariants[variant])}>
           <Icon className="h-5 w-5" />
         </div>
       </div>
