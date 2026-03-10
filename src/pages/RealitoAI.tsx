@@ -50,7 +50,7 @@ export default function RealitoAI() {
   const [query, setQuery] = useState("");
 
   return (
-    <div className="space-y-8 p-8 max-w-[1400px]">
+    <div className="space-y-8 max-w-[1400px]">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-4">
         <motion.div
           whileHover={{ rotate: 5, scale: 1.05 }}

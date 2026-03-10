@@ -29,7 +29,7 @@ const fadeUp = {
 
 export default function Dashboard() {
   return (
-    <div className="space-y-8 p-8 max-w-[1400px]">
+    <div className="space-y-8 max-w-[1400px]">
       {/* Header */}
       <motion.div {...fadeUp} className="flex items-end justify-between">
         <div>
