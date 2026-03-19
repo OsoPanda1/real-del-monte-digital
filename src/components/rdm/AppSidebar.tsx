@@ -8,13 +8,14 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
+  Home,
+  ArrowLeft,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
-  { path: "/", label: "Inicio", icon: Mountain },
   { path: "/dashboard", label: "Dashboard CEO", icon: LayoutDashboard },
   { path: "/game", label: "Veta Soberana", icon: Pickaxe },
   { path: "/b2b", label: "Portal B2B", icon: Store },
@@ -43,17 +44,23 @@ export function AppSidebar() {
         </motion.div>
         <AnimatePresence>
           {!collapsed && (
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              className="overflow-hidden"
-            >
+            <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="overflow-hidden">
               <p className="text-sm font-display font-bold text-gradient-gold tracking-wide">RDM DIGITAL</p>
               <p className="text-[9px] font-mono text-muted-foreground tracking-widest uppercase">TAMV MD-X5</p>
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+      {/* Back to public */}
+      <div className="px-3 pt-3">
+        <NavLink
+          to="/"
+          className="group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[12px] font-medium text-muted-foreground hover:text-gold transition-all duration-300 hover:bg-sidebar-accent/50"
+        >
+          <ArrowLeft className="h-4 w-4 shrink-0" />
+          {!collapsed && <span>Volver al Portal</span>}
+        </NavLink>
       </div>
 
       {/* Nav */}
@@ -66,20 +73,12 @@ export function AppSidebar() {
               to={item.path}
               className={cn(
                 "group relative flex items-center gap-3 rounded-xl px-3.5 py-3 text-[13px] font-medium transition-all duration-300",
-                isActive
-                  ? "text-primary-foreground"
-                  : "text-sidebar-foreground hover:text-foreground"
+                isActive ? "text-primary-foreground" : "text-sidebar-foreground hover:text-foreground"
               )}
             >
-              {/* Active background */}
               {isActive && (
-                <motion.div
-                  layoutId="activeNav"
-                  className="absolute inset-0 rounded-xl gradient-gold shadow-gold"
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                />
+                <motion.div layoutId="activeNav" className="absolute inset-0 rounded-xl gradient-gold shadow-gold" transition={{ type: "spring", stiffness: 400, damping: 30 }} />
               )}
-              {/* Hover background */}
               {!isActive && (
                 <div className="absolute inset-0 rounded-xl bg-sidebar-accent/0 group-hover:bg-sidebar-accent/80 transition-colors duration-300" />
               )}
@@ -90,18 +89,12 @@ export function AppSidebar() {
         })}
       </nav>
 
-      {/* Bottom section */}
+      {/* Bottom */}
       <div className="p-3 space-y-2 border-t border-sidebar-border/50">
         {!collapsed && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-center gap-2 rounded-xl glass-gold p-3"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 rounded-xl glass-gold p-3">
             <Sparkles className="h-3.5 w-3.5 text-gold shrink-0" />
-            <p className="text-[10px] text-muted-foreground leading-tight">
-              Instancia soberana activa
-            </p>
+            <p className="text-[10px] text-muted-foreground leading-tight">Instancia soberana activa</p>
           </motion.div>
         )}
         <button
