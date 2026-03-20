@@ -14,7 +14,245 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      businesses: {
+        Row: {
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          is_subscribed: boolean | null
+          lat: number | null
+          lng: number | null
+          monthly_fee: number | null
+          name: string
+          sector: string
+          updated_at: string
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          is_subscribed?: boolean | null
+          lat?: number | null
+          lng?: number | null
+          monthly_fee?: number | null
+          name: string
+          sector: string
+          updated_at?: string
+        }
+        Update: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          is_subscribed?: boolean | null
+          lat?: number | null
+          lng?: number | null
+          monthly_fee?: number | null
+          name?: string
+          sector?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mining_nodes: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          lat: number
+          lng: number
+          mineral_type: string
+          name: string
+          point_value: number | null
+          rarity: string
+          spawn_rate: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          lat: number
+          lng: number
+          mineral_type?: string
+          name: string
+          point_value?: number | null
+          rarity?: string
+          spawn_rate?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          lat?: number
+          lng?: number
+          mineral_type?: string
+          name?: string
+          point_value?: number | null
+          rarity?: string
+          spawn_rate?: number | null
+        }
+        Relationships: []
+      }
+      mining_sessions: {
+        Row: {
+          ended_at: string | null
+          id: string
+          mineral_type: string | null
+          minerals_earned: number | null
+          node_id: string | null
+          started_at: string
+          user_id: string
+        }
+        Insert: {
+          ended_at?: string | null
+          id?: string
+          mineral_type?: string | null
+          minerals_earned?: number | null
+          node_id?: string | null
+          started_at?: string
+          user_id: string
+        }
+        Update: {
+          ended_at?: string | null
+          id?: string
+          mineral_type?: string | null
+          minerals_earned?: number | null
+          node_id?: string | null
+          started_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mining_sessions_node_id_fkey"
+            columns: ["node_id"]
+            isOneToOne: false
+            referencedRelation: "mining_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      places: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          lat: number
+          lng: number
+          name: string
+          rating: number | null
+          schedule: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          lat: number
+          lng: number
+          name: string
+          rating?: number | null
+          schedule?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          lat?: number
+          lng?: number
+          name?: string
+          rating?: number | null
+          schedule?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          is_premium: boolean | null
+          level: number | null
+          total_minerals: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          is_premium?: boolean | null
+          level?: number | null
+          total_minerals?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          is_premium?: boolean | null
+          level?: number | null
+          total_minerals?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      territorial_metrics: {
+        Row: {
+          id: string
+          metric_name: string
+          metric_unit: string | null
+          metric_value: number
+          recorded_at: string
+        }
+        Insert: {
+          id?: string
+          metric_name: string
+          metric_unit?: string | null
+          metric_value?: number
+          recorded_at?: string
+        }
+        Update: {
+          id?: string
+          metric_name?: string
+          metric_unit?: string | null
+          metric_value?: number
+          recorded_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
