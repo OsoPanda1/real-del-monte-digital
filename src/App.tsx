@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import Historia from "./pages/Historia";
 import Gastronomia from "./pages/Gastronomia";
 import Lugares from "./pages/Lugares";
+import Mapa from "./pages/Mapa";
 import Rutas from "./pages/Rutas";
 import Comunidad from "./pages/Comunidad";
 import Dashboard from "./pages/Dashboard";
