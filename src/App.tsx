@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import Historia from "./pages/Historia";
 import Gastronomia from "./pages/Gastronomia";
 import Lugares from "./pages/Lugares";
+import Mapa from "./pages/Mapa";
 import Rutas from "./pages/Rutas";
 import Comunidad from "./pages/Comunidad";
 import Dashboard from "./pages/Dashboard";
@@ -46,6 +47,7 @@ const App = () => {
               <Route path="/historia" element={<Historia />} />
               <Route path="/gastronomia" element={<Gastronomia />} />
               <Route path="/lugares" element={<Lugares />} />
+              <Route path="/mapa" element={<Mapa />} />
               <Route path="/rutas" element={<Rutas />} />
               <Route path="/comunidad" element={<Comunidad />} />
             </Route>

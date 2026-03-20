@@ -7,6 +7,7 @@ const links = {
     { label: "Historia Minera", path: "/historia" },
     { label: "Gastronomía", path: "/gastronomia" },
     { label: "Lugares", path: "/lugares" },
+    { label: "Mapa Interactivo", path: "/mapa" },
     { label: "Rutas Turísticas", path: "/rutas" },
     { label: "Comunidad", path: "/comunidad" },
   ],

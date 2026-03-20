@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NavLink } from "react-router-dom";
-import { Mountain, Pickaxe, Utensils, MapPin, Compass, Users, Calendar, Bot, LayoutDashboard, Store, Menu, X } from "lucide-react";
+import { Mountain, Pickaxe, Utensils, MapPin, Compass, Users, Calendar, Bot, LayoutDashboard, Store, Menu, X, Navigation } from "lucide-react";
 import { cn } from "@/lib/utils";
 import rdmLogo from "@/assets/rdm-logo.png";
 
@@ -10,6 +10,7 @@ const navItems = [
   { path: "/historia", label: "Historia", icon: Pickaxe },
   { path: "/gastronomia", label: "Gastronomía", icon: Utensils },
   { path: "/lugares", label: "Lugares", icon: MapPin },
+  { path: "/mapa", label: "Mapa", icon: Navigation },
   { path: "/rutas", label: "Rutas", icon: Compass },
   { path: "/comunidad", label: "Comunidad", icon: Users },
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -57,7 +58,7 @@ export default function FloatingNav() {
 
             {/* Desktop nav */}
             <div className="hidden lg:flex items-center gap-1">
-              {navItems.slice(0, 6).map((item) => (
+              {navItems.slice(0, 7).map((item) => (
                 <NavLink
                   key={item.path}
                   to={item.path}
