@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { NavLink } from "react-router-dom";
-import { Mountain, Pickaxe, Utensils, MapPin, Compass, Users, Calendar, Bot, LayoutDashboard, Store, Menu, X, Navigation } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { Mountain, Pickaxe, Utensils, MapPin, Compass, Users, Bot, LayoutDashboard, Menu, X, Navigation, LogIn, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import rdmLogo from "@/assets/rdm-logo.png";
 
 const navItems = [
