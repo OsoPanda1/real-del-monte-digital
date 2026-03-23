@@ -18,6 +18,7 @@ import Dashboard from "./pages/Dashboard";
 import GamePortal from "./pages/GamePortal";
 import B2BPortal from "./pages/B2BPortal";
 import RealitoAI from "./pages/RealitoAI";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,8 @@ const App = () => {
               <Route path="/rutas" element={<Rutas />} />
               <Route path="/comunidad" element={<Comunidad />} />
             </Route>
+            {/* Auth */}
+            <Route path="/auth" element={<Auth />} />
             {/* Admin/OS pages with Sidebar */}
             <Route element={<RdmLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
