@@ -22,12 +22,26 @@ const navItems = [
 export default function FloatingNav() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 80);
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
   }, []);
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null));
+    supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Sesión cerrada");
+    navigate("/");
+  };
 
   return (
     <>
@@ -81,11 +95,17 @@ export default function FloatingNav() {
               ))}
             </div>
 
-            {/* CTA + Mobile */}
+            {/* CTA + Auth + Mobile */}
             <div className="flex items-center gap-3">
-              <NavLink to="/dashboard" className="hidden lg:flex items-center gap-2 btn-premium !px-5 !py-2.5 !text-[11px]">
-                <LayoutDashboard className="h-3.5 w-3.5" /> Dashboard
-              </NavLink>
+              {user ? (
+                <button onClick={handleLogout} className="hidden lg:flex items-center gap-2 btn-glass !px-4 !py-2 !text-[11px]">
+                  <LogOut className="h-3.5 w-3.5" /> Salir
+                </button>
+              ) : (
+                <NavLink to="/auth" className="hidden lg:flex items-center gap-2 btn-premium !px-5 !py-2.5 !text-[11px]">
+                  <LogIn className="h-3.5 w-3.5" /> Entrar
+                </NavLink>
+              )}
               <button onClick={() => setMobileOpen(true)} className="lg:hidden p-2 text-muted-foreground hover:text-gold transition-colors">
                 <Menu className="h-5 w-5" />
               </button>
