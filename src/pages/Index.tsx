@@ -1,10 +1,11 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { Mountain, Pickaxe, Store, Bot, LayoutDashboard, Shield, ChevronRight, ChevronDown, Gem, Zap, ArrowDown, Sparkles, MapPin, Compass, Utensils, Users, Star } from "lucide-react";
+import { Mountain, Pickaxe, Store, Bot, LayoutDashboard, Shield, ChevronRight, ChevronDown, Gem, Zap, ArrowDown, Sparkles, MapPin, Compass, Utensils, Users, Star, Calendar, Crown, Navigation, Gift } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { FloatingParticles, FogLayer, TextReveal, StaggerContainer, StaggerItem, GlowCard, MagneticButton, GradientSeparator, MeshGradient } from "@/components/rdm/VisualEffects";
 import ExperienceGrid from "@/components/rdm/ExperienceGrid";
 import EditorialSection from "@/components/rdm/EditorialSection";
+import HomeSections from "@/components/rdm/HomeSections";
 
 import heroImg from "@/assets/hero-aerial.jpg";
 import mineImg from "@/assets/mine-tunnel.jpg";
@@ -336,6 +337,9 @@ export default function Index() {
           </StaggerContainer>
         </div>
       </section>
+
+      {/* ═══ NEW DYNAMIC SECTIONS: Map preview · Eventos · Comercios · Recorridos · Premium ═══ */}
+      <HomeSections />
 
       {/* ═══ ARCHITECTURE ═══ */}
       <section className="py-24 px-6 lg:px-12">
