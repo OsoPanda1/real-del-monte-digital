@@ -1,187 +1,230 @@
 import { motion } from "framer-motion";
-import { Pickaxe, Gem, Trophy, Zap, ShieldCheck, Crown, Sparkles, Star } from "lucide-react";
-import { mineralTypes, leaderboard, miningActivityData } from "@/data/mockData";
-import { MiniChart } from "@/components/rdm/MiniChart";
+import { Pickaxe, Gem, Trophy, Crown, Sparkles, Lock, Gift, ShieldCheck, Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
-
-const mineralColors: Record<string, string> = {
-  silver: "text-silver",
-  "gold-dim": "text-gold-dim",
-  gold: "text-gold",
-};
-
-const rarityGradients: Record<string, string> = {
-  "Común": "from-secondary/50 to-secondary/20",
-  "Frecuente": "from-gold-dim/15 to-gold-dim/5",
-  "Raro": "from-electric/10 to-electric/5",
-  "Épico": "from-gold/15 to-gold/5",
-};
-
-const rarityBorder: Record<string, string> = {
-  "Común": "border-border",
-  "Frecuente": "border-gold-dim/20",
-  "Raro": "border-electric/25",
-  "Épico": "border-gold/30",
-};
-
-const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.08 } },
-};
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const } },
-};
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import type { User } from "@supabase/supabase-js";
 
 export default function GamePortal() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setUser(s?.user ?? null));
+    supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const { data: profile } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data } = await supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle();
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const { data: premium } = useQuery({
+    queryKey: ["premium", user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data } = await supabase.from("subscriptions_premium").select("*").eq("user_id", user.id).maybeSingle();
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const { data: rewards } = useQuery({
+    queryKey: ["rewards"],
+    queryFn: async () => {
+      const { data } = await supabase.from("rewards").select("*, businesses(name, sector, icon)").eq("is_active", true).order("points_cost");
+      return data || [];
+    },
+  });
+
+  const isPremium = premium?.status === "activa";
+  const totalMinerals = profile?.total_minerals ?? 0;
+
+  const handleActivatePremium = async () => {
+    if (!user) { navigate("/auth"); return; }
+    // Demo activation (Stripe se integrará en próxima iteración)
+    const { error } = await supabase.from("subscriptions_premium").upsert({
+      user_id: user.id,
+      status: "activa" as const,
+      amount: 99,
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    }, { onConflict: "user_id" });
+    if (error) { toast.error("No se pudo activar Premium"); return; }
+    toast.success("¡Premium activado! Pagos reales próximamente.");
+  };
+
+  const handleRedeem = async (reward: any) => {
+    if (!user || !isPremium) { toast.error("Necesitas Premium para canjear"); return; }
+    if (totalMinerals < reward.points_cost) { toast.error("No tienes suficientes minerales"); return; }
+    const { data, error } = await supabase.from("reward_redemptions").insert({
+      user_id: user.id,
+      reward_id: reward.id,
+    }).select().single();
+    if (error) { toast.error("No se pudo canjear"); return; }
+    await supabase.from("profiles").update({ total_minerals: totalMinerals - reward.points_cost }).eq("user_id", user.id);
+    toast.success(`¡Canjeado! Código: ${data.code}`);
+  };
+
   return (
     <div className="space-y-8 max-w-[1400px]">
+      {/* Header */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-muted-foreground mb-2">
-          Gamificación Territorial
+          Gamificación Territorial · Economía Sostenible
         </p>
         <h1 className="text-4xl font-display font-bold tracking-tight">Veta Soberana</h1>
-        <p className="text-sm font-body text-muted-foreground mt-1">Minería Digital geolocalizada de Real del Monte</p>
+        <p className="text-sm font-body text-muted-foreground mt-1">
+          Mina minerales digitales y canjéalos por premios reales en comercios oficiales de Real del Monte.
+        </p>
       </motion.div>
 
-      {/* Mineral cards */}
-      <motion.div variants={container} initial="hidden" animate="show" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {mineralTypes.map((mineral, i) => (
-          <motion.div
-            key={mineral.name}
-            variants={item}
-            whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.2 } }}
-            className={cn(
-              "relative overflow-hidden rounded-2xl border p-6 text-center bg-gradient-to-b cursor-pointer transition-shadow duration-300",
-              rarityGradients[mineral.rarity],
-              rarityBorder[mineral.rarity],
-              mineral.rarity === "Épico" && "glow-gold"
-            )}
-          >
-            {mineral.rarity === "Épico" && (
-              <Sparkles className="absolute top-3 right-3 h-4 w-4 text-gold/40 animate-pulse-gold" />
-            )}
-            <div className={cn(
-              "mx-auto flex h-16 w-16 items-center justify-center rounded-2xl mb-4",
-              mineral.rarity === "Épico" ? "bg-gold/15" : "bg-secondary/40"
-            )}>
-              <Gem className={cn("h-8 w-8", mineralColors[mineral.color] || "text-foreground")} />
+      {/* Status bar */}
+      {user && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid gap-4 md:grid-cols-3">
+          <div className="glass rounded-2xl p-5 flex items-center gap-4">
+            <div className="h-12 w-12 rounded-xl bg-gold/15 flex items-center justify-center">
+              <Gem className="h-6 w-6 text-gold" />
             </div>
-            <h3 className="text-xl font-display font-bold">{mineral.name}</h3>
-            <p className="text-[11px] font-body text-muted-foreground mt-1">{mineral.rarity}</p>
-            <div className="mt-4 space-y-1.5 text-[11px] font-mono">
-              <p className="text-muted-foreground">Spawn: {mineral.spawnRate}%</p>
-              <p className="text-gold font-semibold">Valor: {mineral.value} pts</p>
+            <div>
+              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Tus minerales</p>
+              <p className="text-2xl font-display font-bold text-gradient-gold">{totalMinerals.toLocaleString()}</p>
             </div>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      <div className="grid gap-5 lg:grid-cols-2">
-        {/* Power-ups */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="glass rounded-2xl p-6"
-        >
-          <h3 className="mb-5 font-display text-xl font-bold flex items-center gap-2">
-            <Zap className="h-5 w-5 text-gold" /> Power-Ups
-          </h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between rounded-xl bg-secondary/30 p-5 hover:bg-secondary/40 transition-colors">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-copper/10">
-                  <span className="text-2xl">⛏️</span>
-                </div>
-                <div>
-                  <p className="font-body font-semibold">Pico Cornish</p>
-                  <p className="text-[11px] font-body text-muted-foreground">x2 velocidad de minería</p>
-                </div>
-              </div>
-              <span className="font-mono font-bold text-gold text-lg">$100</span>
+          </div>
+          <div className="glass rounded-2xl p-5 flex items-center gap-4">
+            <div className="h-12 w-12 rounded-xl bg-electric/15 flex items-center justify-center">
+              <Star className="h-6 w-6 text-electric" />
             </div>
-            <div className="flex items-center justify-between rounded-xl bg-secondary/30 p-5 hover:bg-secondary/40 transition-colors">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-electric/10">
-                  <span className="text-2xl">🔧</span>
-                </div>
-                <div>
-                  <p className="font-body font-semibold">Taladro Neumático</p>
-                  <p className="text-[11px] font-body text-muted-foreground">x4 potencia + minerales raros</p>
-                </div>
-              </div>
-              <span className="font-mono font-bold text-gold text-lg">$200</span>
+            <div>
+              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Nivel</p>
+              <p className="text-2xl font-display font-bold">{profile?.level ?? 1}</p>
             </div>
-            <div className="mt-4 glass-gold rounded-2xl p-5">
-              <div className="flex items-center gap-3">
-                <Crown className="h-5 w-5 text-gold" />
-                <div>
-                  <p className="font-display text-lg font-bold text-gradient-gold">Premium RDM</p>
-                  <p className="text-[11px] font-body text-muted-foreground">Minería remota + bolsa de premios · $100 MXN/mes</p>
-                </div>
-              </div>
+          </div>
+          <div className={cn("rounded-2xl p-5 flex items-center gap-4", isPremium ? "glass-gold" : "glass")}>
+            <div className={cn("h-12 w-12 rounded-xl flex items-center justify-center", isPremium ? "bg-gold/30" : "bg-secondary/40")}>
+              <Crown className={cn("h-6 w-6", isPremium ? "text-gold" : "text-muted-foreground")} />
+            </div>
+            <div>
+              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Estado</p>
+              <p className={cn("text-lg font-display font-bold", isPremium && "text-gradient-gold")}>
+                {isPremium ? "Premium activo" : "Cuenta básica"}
+              </p>
             </div>
           </div>
         </motion.div>
+      )}
 
-        {/* Leaderboard */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="glass rounded-2xl p-6"
-        >
-          <h3 className="mb-5 font-display text-xl font-bold flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-gold" /> Ranking de Mineros
-          </h3>
-          <div className="space-y-2.5">
-            {leaderboard.map((player) => (
-              <motion.div
-                key={player.rank}
-                whileHover={{ x: 4, transition: { duration: 0.15 } }}
-                className={cn(
-                  "flex items-center gap-4 rounded-xl px-5 py-4 transition-colors",
-                  player.rank === 1 ? "glass-gold" : "bg-secondary/20 hover:bg-secondary/30"
-                )}
-              >
-                <span className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-xl text-sm font-bold font-mono",
-                  player.rank === 1 ? "gradient-gold text-primary-foreground shadow-gold" :
-                  player.rank <= 3 ? "bg-secondary text-gold" : "bg-secondary text-muted-foreground"
-                )}>
-                  {player.rank}
-                </span>
-                <span className="text-xl">{player.avatar}</span>
-                <div className="flex-1">
-                  <p className="text-sm font-body font-semibold">{player.name}</p>
-                  <p className="text-[10px] font-body text-muted-foreground">Nivel {player.level}</p>
-                </div>
-                <div className="text-right">
-                  <span className="font-mono text-sm font-bold text-gold">{player.minerals.toLocaleString()}</span>
-                  <p className="text-[9px] font-mono text-muted-foreground">minerales</p>
-                </div>
-              </motion.div>
+      {/* Paywall */}
+      {(!user || !isPremium) && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl glass-gold p-10 text-center relative overflow-hidden">
+          <div className="absolute inset-0 -z-10 opacity-20" style={{ background: "radial-gradient(circle at 50% 50%, hsl(43 80% 55%), transparent 60%)" }} />
+          <Lock className="mx-auto h-12 w-12 text-gold mb-4" />
+          <h3 className="text-3xl font-display font-bold">Activa Veta Soberana Premium</h3>
+          <p className="mt-3 text-sm font-body text-muted-foreground max-w-xl mx-auto">
+            Por <span className="text-gradient-gold font-bold">$99 MXN/mes</span> desbloqueas: minería remota, multiplicadores x2, acceso a la bolsa de premios canjeables y power-ups exclusivos.
+          </p>
+          <div className="mt-6 grid gap-3 max-w-sm mx-auto text-left">
+            {[
+              "Minería digital geolocalizada en RDM",
+              "Premios reales en hoteles, restaurantes y artesanías",
+              "Sin pérdida para la plataforma: comercio aporta el premio",
+              "Cooldown justo y stock limitado por premio",
+            ].map((b) => (
+              <p key={b} className="flex items-center gap-2 text-[12px] font-body text-foreground/90">
+                <ShieldCheck className="h-3.5 w-3.5 text-gold shrink-0" />{b}
+              </p>
             ))}
           </div>
+          <button
+            onClick={handleActivatePremium}
+            className="mt-6 inline-flex items-center gap-2 rounded-xl gradient-gold px-6 py-3 text-sm font-body font-semibold text-primary-foreground shadow-gold hover:shadow-elevated transition-all"
+          >
+            <Crown className="h-4 w-4" />
+            {user ? "Activar Premium" : "Iniciar sesión y activar"}
+          </button>
+          <p className="mt-3 text-[10px] font-mono text-muted-foreground">Pagos reales con Stripe próximamente · Activación demo gratuita</p>
         </motion.div>
-      </div>
+      )}
 
-      {/* Mining activity */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="glass rounded-2xl p-6"
-      >
-        <div className="mb-5 flex items-center justify-between">
-          <h3 className="text-xl font-display font-bold">Actividad Minera en Tiempo Real</h3>
-          <div className="flex items-center gap-2.5 glass-teal rounded-xl px-4 py-2">
-            <ShieldCheck className="h-3.5 w-3.5 text-teal" />
-            <span className="text-[10px] font-mono text-teal font-semibold tracking-wider">ANTIFRAUDE ACTIVO</span>
+      {/* Rewards catalog */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-display font-bold flex items-center gap-2">
+              <Gift className="h-5 w-5 text-gold" />Bolsa de Premios
+            </h2>
+            <p className="text-[12px] font-body text-muted-foreground mt-1">
+              Premios reales aportados por comercios federados. {!isPremium && "Activa Premium para canjear."}
+            </p>
           </div>
         </div>
-        <MiniChart data={miningActivityData} color="hsl(25, 80%, 50%)" height={200} showAxis />
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {(rewards || []).map((r: any) => {
+            const canRedeem = isPremium && totalMinerals >= r.points_cost;
+            return (
+              <motion.div
+                key={r.id}
+                whileHover={{ y: -4 }}
+                className={cn(
+                  "rounded-2xl glass border p-5 flex flex-col",
+                  canRedeem ? "border-gold/30" : "border-border/20"
+                )}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <span className={cn(
+                    "text-[9px] font-mono uppercase tracking-widest px-2 py-1 rounded-md",
+                    r.type === "experiencia" ? "bg-gold/15 text-gold" : r.type === "producto" ? "bg-teal/15 text-teal" : "bg-electric/15 text-electric"
+                  )}>{r.type}</span>
+                  <span className="text-[10px] font-mono text-muted-foreground">stock: {r.stock}</span>
+                </div>
+                <h3 className="text-lg font-display font-bold">{r.title}</h3>
+                <p className="text-[12px] font-body text-muted-foreground mt-1 leading-relaxed flex-1">{r.description}</p>
+                {r.businesses && (
+                  <p className="text-[10px] font-mono text-muted-foreground mt-2">por {r.businesses.icon} {r.businesses.name}</p>
+                )}
+                <div className="mt-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] font-mono text-muted-foreground">Costo</p>
+                    <p className="text-lg font-display font-bold text-gradient-gold">{r.points_cost.toLocaleString()} ⚒️</p>
+                  </div>
+                  <p className="text-[10px] font-mono text-muted-foreground">~${Number(r.monetary_value).toLocaleString()} MXN</p>
+                </div>
+                <button
+                  onClick={() => handleRedeem(r)}
+                  disabled={!canRedeem}
+                  className={cn(
+                    "mt-3 w-full rounded-xl px-4 py-2.5 text-[12px] font-body font-semibold transition-all",
+                    canRedeem
+                      ? "gradient-gold text-primary-foreground shadow-gold hover:shadow-elevated"
+                      : "bg-secondary/30 text-muted-foreground cursor-not-allowed"
+                  )}
+                >
+                  {!isPremium ? "Requiere Premium" : !user ? "Inicia sesión" : totalMinerals < r.points_cost ? "Faltan minerales" : "Canjear"}
+                </button>
+              </motion.div>
+            );
+          })}
+        </div>
+      </motion.div>
+
+      {/* Economy formula */}
+      <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="glass rounded-2xl p-6">
+        <h3 className="font-display text-lg font-bold flex items-center gap-2">
+          <Sparkles className="h-4 w-4 text-gold" />Fórmula de sostenibilidad
+        </h3>
+        <p className="text-[12px] font-body text-muted-foreground mt-2 leading-relaxed">
+          Cada premio tiene un <span className="text-gold font-mono">points_cost</span> calculado para que la plataforma mantenga un margen ≥30%.
+          Los comercios federados aportan los premios a cambio de visibilidad y tráfico — no representan costo directo para la plataforma.
+          Stock limitado, cooldown de 24h y techo de canje por usuario garantizan estabilidad económica.
+        </p>
       </motion.div>
     </div>
   );
