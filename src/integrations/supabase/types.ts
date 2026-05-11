@@ -68,6 +68,39 @@ export type Database = {
         }
         Relationships: []
       }
+      commerce_subscriptions: {
+        Row: {
+          amount: number
+          business_id: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          plan: Database["public"]["Enums"]["subscription_plan"]
+          started_at: string
+          status: Database["public"]["Enums"]["subscription_status"]
+        }
+        Insert: {
+          amount?: number
+          business_id: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          plan?: Database["public"]["Enums"]["subscription_plan"]
+          started_at?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+        }
+        Update: {
+          amount?: number
+          business_id?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          plan?: Database["public"]["Enums"]["subscription_plan"]
+          started_at?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+        }
+        Relationships: []
+      }
       community_comments: {
         Row: {
           content: string
@@ -130,6 +163,45 @@ export type Database = {
           likes_count?: number | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          ends_at: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          location: string | null
+          starts_at: string
+          title: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          location?: string | null
+          starts_at: string
+          title: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          location?: string | null
+          starts_at?: string
+          title?: string
         }
         Relationships: []
       }
@@ -323,6 +395,121 @@ export type Database = {
         }
         Relationships: []
       }
+      reward_redemptions: {
+        Row: {
+          code: string
+          id: string
+          redeemed_at: string
+          reward_id: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          code?: string
+          id?: string
+          redeemed_at?: string
+          reward_id: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          code?: string
+          id?: string
+          redeemed_at?: string
+          reward_id?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_redemptions_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "rewards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rewards: {
+        Row: {
+          business_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          monetary_value: number
+          points_cost: number
+          stock: number | null
+          title: string
+          type: Database["public"]["Enums"]["reward_type"]
+        }
+        Insert: {
+          business_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          monetary_value?: number
+          points_cost?: number
+          stock?: number | null
+          title: string
+          type?: Database["public"]["Enums"]["reward_type"]
+        }
+        Update: {
+          business_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          monetary_value?: number
+          points_cost?: number
+          stock?: number | null
+          title?: string
+          type?: Database["public"]["Enums"]["reward_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rewards_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscriptions_premium: {
+        Row: {
+          amount: number
+          created_at: string
+          expires_at: string | null
+          id: string
+          started_at: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       territorial_metrics: {
         Row: {
           id: string
@@ -347,6 +534,186 @@ export type Database = {
         }
         Relationships: []
       }
+      tour_availability: {
+        Row: {
+          capacity_left: number
+          created_at: string
+          date: string
+          guide_id: string | null
+          id: string
+          is_active: boolean | null
+          package_id: string
+          time: string
+        }
+        Insert: {
+          capacity_left?: number
+          created_at?: string
+          date: string
+          guide_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          package_id: string
+          time: string
+        }
+        Update: {
+          capacity_left?: number
+          created_at?: string
+          date?: string
+          guide_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          package_id?: string
+          time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tour_availability_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "tour_guides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tour_availability_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "tour_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tour_bookings: {
+        Row: {
+          availability_id: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          package_id: string
+          persons: number
+          status: Database["public"]["Enums"]["booking_status"]
+          total_paid: number
+          user_id: string
+        }
+        Insert: {
+          availability_id?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          package_id: string
+          persons?: number
+          status?: Database["public"]["Enums"]["booking_status"]
+          total_paid?: number
+          user_id: string
+        }
+        Update: {
+          availability_id?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          package_id?: string
+          persons?: number
+          status?: Database["public"]["Enums"]["booking_status"]
+          total_paid?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tour_bookings_availability_id_fkey"
+            columns: ["availability_id"]
+            isOneToOne: false
+            referencedRelation: "tour_availability"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tour_bookings_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "tour_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tour_guides: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          languages: string[] | null
+          name: string
+          rating: number | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          languages?: string[] | null
+          name: string
+          rating?: number | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          languages?: string[] | null
+          name?: string
+          rating?: number | null
+        }
+        Relationships: []
+      }
+      tour_packages: {
+        Row: {
+          created_at: string
+          description: string | null
+          difficulty: string | null
+          duration_min: number
+          id: string
+          image_url: string | null
+          includes: string[] | null
+          is_active: boolean | null
+          max_capacity: number
+          price: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          duration_min?: number
+          id?: string
+          image_url?: string | null
+          includes?: string[] | null
+          is_active?: boolean | null
+          max_capacity?: number
+          price?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          duration_min?: number
+          id?: string
+          image_url?: string | null
+          includes?: string[] | null
+          is_active?: boolean | null
+          max_capacity?: number
+          price?: number
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -355,7 +722,10 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      booking_status: "pendiente" | "confirmada" | "completada" | "cancelada"
+      reward_type: "descuento" | "producto" | "experiencia"
+      subscription_plan: "mensual" | "trimestral"
+      subscription_status: "activa" | "pendiente" | "cancelada" | "expirada"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -482,6 +852,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      booking_status: ["pendiente", "confirmada", "completada", "cancelada"],
+      reward_type: ["descuento", "producto", "experiencia"],
+      subscription_plan: ["mensual", "trimestral"],
+      subscription_status: ["activa", "pendiente", "cancelada", "expirada"],
+    },
   },
 } as const
