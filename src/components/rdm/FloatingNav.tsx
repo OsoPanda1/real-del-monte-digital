@@ -1,10 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Mountain, Pickaxe, Utensils, MapPin, Compass, Users, Bot, LayoutDashboard, Menu, X, Navigation, LogIn, LogOut } from "lucide-react";
+import {
+  Mountain,
+  Pickaxe,
+  Utensils,
+  MapPin,
+  Compass,
+  Users,
+  Bot,
+  LayoutDashboard,
+  Menu,
+  X,
+  Navigation,
+  LogIn,
+  LogOut,
+  Store,
+  Calendar,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { User } from "@supabase/supabase-js";
 import rdmLogo from "@/assets/rdm-logo.png";
 
 const navItems = [
@@ -13,104 +30,123 @@ const navItems = [
   { path: "/gastronomia", label: "Gastronomía", icon: Utensils },
   { path: "/lugares", label: "Lugares", icon: MapPin },
   { path: "/mapa", label: "Mapa", icon: Navigation },
-  { path: "/rutas", label: "Rutas", icon: Compass },
+  { path: "/recorridos", label: "Recorridos", icon: Compass },
+  { path: "/comercios", label: "Comercios", icon: Store },
   { path: "/comunidad", label: "Comunidad", icon: Users },
-  { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/realito", label: "Realito AI", icon: Bot },
+  { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
 ];
+
+const scrollThreshold = 80;
 
 export default function FloatingNav() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 80);
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
+    const handleScroll = () => setScrolled(window.scrollY > scrollThreshold);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
     supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = useCallback(async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) { toast.error("No se pudo cerrar sesión."); return; }
     toast.success("Sesión cerrada");
     navigate("/");
-  };
+  }, [navigate]);
 
   return (
     <>
       <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
+        initial={{ y: -90, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 28 }}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-          scrolled ? "py-2" : "py-4"
+          "fixed top-0 left-0 right-0 z-40 transition-all duration-500",
+          scrolled ? "bg-background/80 backdrop-blur-2xl border-b border-border/30" : "bg-transparent"
         )}
       >
-        <div className={cn(
-          "mx-auto max-w-7xl px-4 transition-all duration-500",
-          scrolled ? "mx-4 lg:mx-auto" : ""
-        )}>
-          <nav className={cn(
-            "flex items-center justify-between rounded-2xl px-5 py-3 transition-all duration-500",
-            scrolled
-              ? "glass shadow-elevated"
-              : "bg-transparent"
-          )}>
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
             {/* Logo */}
-            <NavLink to="/" className="flex items-center gap-3">
-              <img src={rdmLogo} alt="RDM" className="h-9 w-9 object-contain" />
-              <div className="hidden sm:block">
-                <p className="text-sm font-display font-bold text-gradient-gold tracking-wide">RDM DIGITAL</p>
-                <p className="text-[8px] font-mono text-muted-foreground tracking-[0.2em] uppercase">Pueblo Mágico</p>
+            <NavLink to="/" className="flex items-center gap-3 group">
+              <div className="relative h-10 w-10 shrink-0">
+                <img src={rdmLogo} alt="RDM" className="h-10 w-10 drop-shadow-[0_0_12px_rgba(255,215,0,0.4)] transition-transform group-hover:scale-110" />
+              </div>
+              <div className="hidden sm:block leading-none">
+                <p className="text-[13px] font-display font-bold text-gradient-gold">RDM DIGITAL</p>
+                <p className="mt-1 text-[9px] font-mono uppercase tracking-[0.25em] text-muted-foreground">
+                  Pueblo Mágico · Real del Monte
+                </p>
               </div>
             </NavLink>
 
             {/* Desktop nav */}
-            <div className="hidden lg:flex items-center gap-1">
-              {navItems.slice(0, 7).map((item) => (
+            <nav className="hidden lg:flex items-center gap-1">
+              {navItems.slice(0, 8).map((item) => (
                 <NavLink
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) => cn(
-                    "relative px-3.5 py-2 text-[12px] font-body font-medium transition-all duration-300 rounded-xl",
-                    isActive ? "text-gold" : "text-muted-foreground hover:text-foreground"
+                    "relative px-3 py-2 text-[12px] font-body font-medium rounded-xl transition-all duration-300",
+                    "text-muted-foreground hover:text-foreground",
+                    isActive && "text-gold"
                   )}
                 >
                   {({ isActive }) => (
                     <>
                       {isActive && (
-                        <motion.div layoutId="navActive" className="absolute inset-0 rounded-xl bg-gold/10 border border-gold/15" transition={{ type: "spring", stiffness: 300, damping: 25 }} />
+                        <motion.span
+                          layoutId="navActive"
+                          transition={{ type: "spring", stiffness: 320, damping: 26 }}
+                          className="absolute inset-0 rounded-xl bg-gold/10 border border-gold/20"
+                        />
                       )}
-                      <span className="relative z-10">{item.label}</span>
+                      <span className="relative">{item.label}</span>
                     </>
                   )}
                 </NavLink>
               ))}
-            </div>
+            </nav>
 
             {/* CTA + Auth + Mobile */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {user ? (
-                <button onClick={handleLogout} className="hidden lg:flex items-center gap-2 btn-glass !px-4 !py-2 !text-[11px]">
-                  <LogOut className="h-3.5 w-3.5" /> Salir
+                <button
+                  onClick={handleLogout}
+                  className="hidden sm:flex items-center gap-1.5 rounded-xl border border-border/30 bg-secondary/30 px-3 py-2 text-[11px] font-body font-medium text-muted-foreground hover:text-foreground hover:border-gold/30 transition-all"
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                  Salir
                 </button>
               ) : (
-                <NavLink to="/auth" className="hidden lg:flex items-center gap-2 btn-premium !px-5 !py-2.5 !text-[11px]">
-                  <LogIn className="h-3.5 w-3.5" /> Entrar
+                <NavLink
+                  to="/auth"
+                  className="hidden sm:flex items-center gap-1.5 rounded-xl gradient-gold px-3.5 py-2 text-[11px] font-body font-semibold text-primary-foreground shadow-gold hover:shadow-elevated transition-all"
+                >
+                  <LogIn className="h-3.5 w-3.5" />
+                  Entrar
                 </NavLink>
               )}
-              <button onClick={() => setMobileOpen(true)} className="lg:hidden p-2 text-muted-foreground hover:text-gold transition-colors">
-                <Menu className="h-5 w-5" />
+              <button
+                onClick={() => setMobileOpen(true)}
+                className="lg:hidden flex h-9 w-9 items-center justify-center rounded-xl border border-border/30 text-muted-foreground hover:text-gold transition-colors"
+              >
+                <Menu className="h-4 w-4" />
               </button>
             </div>
-          </nav>
+          </div>
         </div>
       </motion.header>
 
@@ -121,35 +157,70 @@ export default function FloatingNav() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] glass"
             onClick={() => setMobileOpen(false)}
+            className="fixed inset-0 z-50 bg-background/80 backdrop-blur-xl lg:hidden"
           >
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="absolute right-0 top-0 bottom-0 w-80 bg-card/95 backdrop-blur-2xl border-l border-border/30 p-8"
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
               onClick={(e) => e.stopPropagation()}
+              className="absolute right-0 top-0 h-full w-[85vw] max-w-sm bg-background border-l border-border/30 p-6 overflow-y-auto"
             >
-              <button onClick={() => setMobileOpen(false)} className="absolute top-6 right-6 text-muted-foreground hover:text-gold">
-                <X className="h-5 w-5" />
-              </button>
-              <div className="mt-12 space-y-1">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                  <img src={rdmLogo} alt="RDM" className="h-10 w-10" />
+                  <div>
+                    <p className="text-sm font-display font-bold text-gradient-gold">Navegación</p>
+                    <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mt-0.5">
+                      Real del Monte Digital
+                    </p>
+                  </div>
+                </div>
+                <button onClick={() => setMobileOpen(false)} className="h-9 w-9 flex items-center justify-center rounded-xl text-muted-foreground hover:text-gold">
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              <nav className="space-y-1.5">
                 {navItems.map((item) => (
                   <NavLink
                     key={item.path}
                     to={item.path}
                     onClick={() => setMobileOpen(false)}
                     className={({ isActive }) => cn(
-                      "flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-body transition-all",
-                      isActive ? "text-gold bg-gold/10" : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
+                      "flex items-center gap-3 rounded-xl px-4 py-3.5 text-sm font-body transition-all",
+                      isActive
+                        ? "bg-gold/10 text-gold border border-gold/20"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
                     )}
                   >
                     <item.icon className="h-4 w-4" />
                     {item.label}
                   </NavLink>
                 ))}
+              </nav>
+
+              <div className="mt-8 pt-6 border-t border-border/20">
+                {user ? (
+                  <button
+                    onClick={() => { setMobileOpen(false); handleLogout(); }}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-border/30 px-4 py-3 text-sm font-body text-muted-foreground hover:text-foreground"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Cerrar sesión
+                  </button>
+                ) : (
+                  <NavLink
+                    to="/auth"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl gradient-gold px-4 py-3 text-sm font-body font-semibold text-primary-foreground"
+                  >
+                    <LogIn className="h-4 w-4" />
+                    Entrar al portal
+                  </NavLink>
+                )}
               </div>
             </motion.div>
           </motion.div>
