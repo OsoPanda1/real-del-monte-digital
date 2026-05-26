@@ -51,16 +51,34 @@ export default function GamePortal() {
 
   const handleActivatePremium = async () => {
     if (!user) { navigate("/auth"); return; }
-    // Demo activation (Stripe se integrará en próxima iteración)
-    const { error } = await supabase.from("subscriptions_premium").upsert({
-      user_id: user.id,
-      status: "activa" as const,
-      amount: 99,
-      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    }, { onConflict: "user_id" });
-    if (error) { toast.error("No se pudo activar Premium"); return; }
-    toast.success("¡Premium activado! Pagos reales próximamente.");
+    try {
+      const { data, error } = await supabase.functions.invoke("create-premium-checkout");
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch (e: any) {
+      toast.error(e?.message || "No se pudo iniciar el pago");
+    }
   };
+
+  const handleManageSubscription = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke("customer-portal");
+      if (error) throw error;
+      if (data?.url) window.open(data.url, "_blank");
+    } catch (e: any) {
+      toast.error(e?.message || "No se pudo abrir el portal");
+    }
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("premium") === "success" && user) {
+      supabase.functions.invoke("check-subscription").then(() => {
+        toast.success("¡Premium activado!");
+        window.history.replaceState({}, "", "/game");
+      });
+    }
+  }, [user]);
 
   const handleRedeem = async (reward: any) => {
     if (!user || !isPremium) { toast.error("Necesitas Premium para canjear"); return; }
@@ -122,6 +140,17 @@ export default function GamePortal() {
         </motion.div>
       )}
 
+      {isPremium && (
+        <div className="flex justify-end">
+          <button
+            onClick={handleManageSubscription}
+            className="inline-flex items-center gap-2 rounded-xl glass-gold px-4 py-2 text-[12px] font-body font-semibold text-gold hover:shadow-gold transition-all"
+          >
+            <Crown className="h-3.5 w-3.5" />Gestionar suscripción
+          </button>
+        </div>
+      )}
+
       {/* Paywall */}
       {(!user || !isPremium) && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl glass-gold p-10 text-center relative overflow-hidden">
@@ -150,7 +179,7 @@ export default function GamePortal() {
             <Crown className="h-4 w-4" />
             {user ? "Activar Premium" : "Iniciar sesión y activar"}
           </button>
-          <p className="mt-3 text-[10px] font-mono text-muted-foreground">Pagos reales con Stripe próximamente · Activación demo gratuita</p>
+          <p className="mt-3 text-[10px] font-mono text-muted-foreground">Pago seguro con Stripe · Cancela cuando quieras desde el portal</p>
         </motion.div>
       )}
 
