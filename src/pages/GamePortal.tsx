@@ -140,6 +140,17 @@ export default function GamePortal() {
         </motion.div>
       )}
 
+      {isPremium && (
+        <div className="flex justify-end">
+          <button
+            onClick={handleManageSubscription}
+            className="inline-flex items-center gap-2 rounded-xl glass-gold px-4 py-2 text-[12px] font-body font-semibold text-gold hover:shadow-gold transition-all"
+          >
+            <Crown className="h-3.5 w-3.5" />Gestionar suscripción
+          </button>
+        </div>
+      )}
+
       {/* Paywall */}
       {(!user || !isPremium) && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl glass-gold p-10 text-center relative overflow-hidden">
