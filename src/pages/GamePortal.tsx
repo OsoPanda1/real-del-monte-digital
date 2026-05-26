@@ -51,16 +51,34 @@ export default function GamePortal() {
 
   const handleActivatePremium = async () => {
     if (!user) { navigate("/auth"); return; }
-    // Demo activation (Stripe se integrará en próxima iteración)
-    const { error } = await supabase.from("subscriptions_premium").upsert({
-      user_id: user.id,
-      status: "activa" as const,
-      amount: 99,
-      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    }, { onConflict: "user_id" });
-    if (error) { toast.error("No se pudo activar Premium"); return; }
-    toast.success("¡Premium activado! Pagos reales próximamente.");
+    try {
+      const { data, error } = await supabase.functions.invoke("create-premium-checkout");
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch (e: any) {
+      toast.error(e?.message || "No se pudo iniciar el pago");
+    }
   };
+
+  const handleManageSubscription = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke("customer-portal");
+      if (error) throw error;
+      if (data?.url) window.open(data.url, "_blank");
+    } catch (e: any) {
+      toast.error(e?.message || "No se pudo abrir el portal");
+    }
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("premium") === "success" && user) {
+      supabase.functions.invoke("check-subscription").then(() => {
+        toast.success("¡Premium activado!");
+        window.history.replaceState({}, "", "/game");
+      });
+    }
+  }, [user]);
 
   const handleRedeem = async (reward: any) => {
     if (!user || !isPremium) { toast.error("Necesitas Premium para canjear"); return; }
