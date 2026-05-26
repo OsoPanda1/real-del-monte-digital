@@ -1,14 +1,56 @@
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Store, MapPin, Star, Phone, Mail, Sparkles, ShieldCheck } from "lucide-react";
-import { useState } from "react";
+import { Store, MapPin, Phone, Mail, Sparkles, ShieldCheck, CreditCard } from "lucide-react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const sectors = ["Todos", "Gastronomía", "Hospedaje", "Artesanías", "Tours"];
 
 export default function Comercios() {
   const [activeSector, setActiveSector] = useState("Todos");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("sub") === "success") {
+      supabase.functions.invoke("check-subscription").then(() => {
+        toast.success("¡Suscripción del comercio activada!");
+        window.history.replaceState({}, "", "/comercios");
+      });
+    }
+  }, []);
+
+  const handleSubscribe = async (plan: "mensual" | "trimestral") => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { navigate("/auth"); return; }
+    const { data: ownBiz } = await supabase.from("businesses").select("id").eq("owner_id", user.id).limit(1).maybeSingle();
+    let businessId = ownBiz?.id;
+    if (!businessId) {
+      const { data: created, error } = await supabase.from("businesses").insert({
+        name: `Mi comercio (${user.email})`,
+        sector: "Gastronomía",
+        owner_id: user.id,
+        is_active: true,
+        is_subscribed: false,
+        contact_email: user.email,
+      } as any).select("id").single();
+      if (error || !created) { toast.error("Crea tu comercio primero o contacta soporte"); return; }
+      businessId = created.id;
+    }
+    try {
+      const { data, error } = await supabase.functions.invoke("create-commerce-checkout", {
+        body: { business_id: businessId, plan },
+      });
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch (e: any) {
+      toast.error(e?.message || "No se pudo iniciar el pago");
+    }
+  };
+
 
   const { data: businesses, isLoading } = useQuery({
     queryKey: ["businesses-catalog"],
