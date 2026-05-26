@@ -179,7 +179,7 @@ export default function GamePortal() {
             <Crown className="h-4 w-4" />
             {user ? "Activar Premium" : "Iniciar sesión y activar"}
           </button>
-          <p className="mt-3 text-[10px] font-mono text-muted-foreground">Pagos reales con Stripe próximamente · Activación demo gratuita</p>
+          <p className="mt-3 text-[10px] font-mono text-muted-foreground">Pago seguro con Stripe · Cancela cuando quieras desde el portal</p>
         </motion.div>
       )}
 
