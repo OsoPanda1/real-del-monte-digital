@@ -29,6 +29,7 @@ export type Database = {
           lng: number | null
           monthly_fee: number | null
           name: string
+          owner_id: string | null
           sector: string
           updated_at: string
         }
@@ -46,6 +47,7 @@ export type Database = {
           lng?: number | null
           monthly_fee?: number | null
           name: string
+          owner_id?: string | null
           sector: string
           updated_at?: string
         }
@@ -63,6 +65,7 @@ export type Database = {
           lng?: number | null
           monthly_fee?: number | null
           name?: string
+          owner_id?: string | null
           sector?: string
           updated_at?: string
         }
@@ -78,6 +81,10 @@ export type Database = {
           plan: Database["public"]["Enums"]["subscription_plan"]
           started_at: string
           status: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string | null
         }
         Insert: {
           amount?: number
@@ -88,6 +95,10 @@ export type Database = {
           plan?: Database["public"]["Enums"]["subscription_plan"]
           started_at?: string
           status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Update: {
           amount?: number
@@ -98,6 +109,10 @@ export type Database = {
           plan?: Database["public"]["Enums"]["subscription_plan"]
           started_at?: string
           status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -488,6 +503,9 @@ export type Database = {
           id: string
           started_at: string
           status: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
           user_id: string
         }
         Insert: {
@@ -497,6 +515,9 @@ export type Database = {
           id?: string
           started_at?: string
           status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
           user_id: string
         }
         Update: {
@@ -506,6 +527,9 @@ export type Database = {
           id?: string
           started_at?: string
           status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
