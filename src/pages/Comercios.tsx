@@ -197,18 +197,20 @@ export default function Comercios() {
               Únete a la federación oficial. Visibilidad en mapa, recomendaciones por Realito AI, y participación en la economía Veta Soberana.
             </p>
             <div className="mt-6 grid gap-4 sm:grid-cols-2 max-w-2xl mx-auto">
-              <div className="rounded-xl bg-background/40 p-5">
+              <button onClick={() => handleSubscribe("mensual")} className="rounded-xl bg-background/40 p-5 text-left hover:bg-background/60 transition-all border border-border/20 hover:border-gold/30">
                 <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Plan mensual</p>
                 <p className="text-3xl font-display font-bold text-gradient-gold mt-2">$499<span className="text-sm text-muted-foreground"> MXN</span></p>
                 <p className="text-[11px] font-body text-muted-foreground mt-1">Visibilidad completa + recompensas</p>
-              </div>
-              <div className="rounded-xl bg-background/40 p-5 border border-gold/30">
+                <p className="mt-3 inline-flex items-center gap-1 text-[11px] font-mono text-gold"><CreditCard className="h-3 w-3" />Pagar con Stripe</p>
+              </button>
+              <button onClick={() => handleSubscribe("trimestral")} className="rounded-xl bg-background/40 p-5 text-left hover:bg-background/60 transition-all border border-gold/30">
                 <p className="text-[10px] font-mono uppercase tracking-widest text-gold">Plan trimestral · Ahorra 15%</p>
                 <p className="text-3xl font-display font-bold text-gradient-gold mt-2">$1,299<span className="text-sm text-muted-foreground"> MXN</span></p>
                 <p className="text-[11px] font-body text-muted-foreground mt-1">3 meses + perfil destacado</p>
-              </div>
+                <p className="mt-3 inline-flex items-center gap-1 text-[11px] font-mono text-gold"><CreditCard className="h-3 w-3" />Pagar con Stripe</p>
+              </button>
             </div>
-            <p className="mt-6 text-[11px] font-mono text-muted-foreground">Pago seguro disponible próximamente</p>
+            <p className="mt-6 text-[11px] font-mono text-muted-foreground">Pago seguro con Stripe · Cancela cuando quieras</p>
           </motion.div>
         </div>
       </section>
