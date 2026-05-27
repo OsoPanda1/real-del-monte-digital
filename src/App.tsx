@@ -22,6 +22,7 @@ import B2BPortal from "./pages/B2BPortal";
 import RealitoAI from "./pages/RealitoAI";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import { RouteTracker } from "./modules/tracking/RouteTracker";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => {
         <Sonner />
         {!introComplete && <CinematicIntro onComplete={handleIntroComplete} />}
         <BrowserRouter>
+          <RouteTracker />
           <Routes>
             {/* Public tourism pages with FloatingNav + Footer */}
             <Route element={<PublicLayout />}>

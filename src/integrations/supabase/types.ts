@@ -181,6 +181,77 @@ export type Database = {
         }
         Relationships: []
       }
+      dt_layer_items: {
+        Row: {
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          layer_id: string
+          weight: number | null
+        }
+        Insert: {
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          layer_id: string
+          weight?: number | null
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          layer_id?: string
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dt_layer_items_layer_id_fkey"
+            columns: ["layer_id"]
+            isOneToOne: false
+            referencedRelation: "dt_layers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dt_layers: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          key: string
+          name: string
+          sort_order: number | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          key: string
+          name: string
+          sort_order?: number | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          key?: string
+          name?: string
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           category: string | null
@@ -217,6 +288,36 @@ export type Database = {
           location?: string | null
           starts_at?: string
           title?: string
+        }
+        Relationships: []
+      }
+      foot_traffic: {
+        Row: {
+          business_id: string | null
+          count: number
+          id: string
+          place_id: string | null
+          recorded_at: string
+          source: string
+          zone_key: string | null
+        }
+        Insert: {
+          business_id?: string | null
+          count?: number
+          id?: string
+          place_id?: string | null
+          recorded_at?: string
+          source?: string
+          zone_key?: string | null
+        }
+        Update: {
+          business_id?: string | null
+          count?: number
+          id?: string
+          place_id?: string | null
+          recorded_at?: string
+          source?: string
+          zone_key?: string | null
         }
         Relationships: []
       }
@@ -735,6 +836,45 @@ export type Database = {
           max_capacity?: number
           price?: number
           title?: string
+        }
+        Relationships: []
+      }
+      tracking_events: {
+        Row: {
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          event_type: string
+          id: string
+          payload: Json | null
+          route: string | null
+          session_id: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          event_type: string
+          id?: string
+          payload?: Json | null
+          route?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          route?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
