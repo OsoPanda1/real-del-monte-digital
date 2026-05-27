@@ -52,8 +52,19 @@ export default function Dashboard() {
         </motion.div>
       </motion.div>
 
-      {/* KPI Grid */}
+      {/* === MÉTRICAS REALES (Digital Twin · OS Territorial) === */}
+      <motion.section {...fadeUp} className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-gradient-to-r from-gold/40 to-transparent" />
+          <p className="text-[10px] font-mono uppercase tracking-[0.35em] text-gold">Snapshot Territorial</p>
+          <div className="h-px flex-1 bg-gradient-to-l from-gold/40 to-transparent" />
+        </div>
+        <DashboardKpis />
+      </motion.section>
+
+      {/* === KPI legacy (visualización demo) === */}
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+
         <KpiCard
           title="Ingreso Territorial"
           value="$284,000"
