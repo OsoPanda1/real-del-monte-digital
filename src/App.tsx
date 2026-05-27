@@ -44,6 +44,7 @@ const App = () => {
         <Sonner />
         {!introComplete && <CinematicIntro onComplete={handleIntroComplete} />}
         <BrowserRouter>
+          <RouteTracker />
           <Routes>
             {/* Public tourism pages with FloatingNav + Footer */}
             <Route element={<PublicLayout />}>
