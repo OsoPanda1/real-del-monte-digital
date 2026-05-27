@@ -2,3 +2,9 @@ project_id = "cajvekfncfztvrausdko"
 
 [functions.stripe-webhook]
 verify_jwt = false
+
+[functions.ingest-event]
+verify_jwt = false
+
+[functions.metrics-aggregates]
+verify_jwt = false
