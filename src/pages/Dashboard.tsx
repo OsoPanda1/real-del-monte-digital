@@ -21,6 +21,7 @@ import {
   zoneHeatmap,
   sovereigntyMetrics,
 } from "@/data/mockData";
+import { DashboardKpis } from "@/modules/dashboard/components/DashboardKpis";
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
