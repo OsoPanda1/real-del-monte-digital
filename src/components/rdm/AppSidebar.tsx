@@ -31,21 +31,21 @@ const navItems: NavItem[] = [
 ];
 
 // Configuraciones de animación optimizadas para hardware (Springs de alta respuesta)
-const sidebarVariants = {
+const sidebarVariants: Variants = {
   expanded: { 
     width: 270, 
-    transition: { type: "spring", stiffness: 300, damping: 28, mass: 0.8 } 
+    transition: { type: "spring" as const, stiffness: 300, damping: 28, mass: 0.8 } 
   },
   collapsed: { 
     width: 84, 
-    transition: { type: "spring", stiffness: 300, damping: 28, mass: 0.8 } 
+    transition: { type: "spring" as const, stiffness: 300, damping: 28, mass: 0.8 } 
   },
 };
 
-const textFadeVariants = {
+const textFadeVariants: Variants = {
   hidden: { opacity: 0, x: -8, filter: "blur(4px)" },
-  visible: { opacity: 1, x: 0, filter: "blur(0px)", transition: { duration: 0.2, ease: "easeOut" } },
-  exit: { opacity: 0, x: -4, filter: "blur(2px)", transition: { duration: 0.15, ease: "easeIn" } },
+  visible: { opacity: 1, x: 0, filter: "blur(0px)", transition: { duration: 0.2, ease: "easeOut" as const } },
+  exit: { opacity: 0, x: -4, filter: "blur(2px)", transition: { duration: 0.15, ease: "easeIn" as const } },
 };
 
 export function AppSidebar() {
