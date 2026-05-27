@@ -1,86 +1,170 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import rdmLogo from "@/assets/rdm-logo.png";
-import rdmAudio from "@/assets/rdmintro.mp3";
+import rdmIntroAudio from "@/assets/rdmintro.mp3";
+
+type Stage = "BOOT" | "AUTH" | "ACCESS";
+
+const STAGE_LABELS: Record<Stage, string> = {
+  BOOT: "BOOTSTRAPING NODO_CERO",
+  AUTH: "SOVEREIGN_AUTH",
+  ACCESS: "RDM_OS_READY",
+};
 
 export function CinematicIntro({ onComplete }: { onComplete: () => void }) {
-  const [phase, setPhase] = useState<"BOOT" | "SCAN" | "AUTH" | "ACCESS">("BOOT");
+  const [stage, setStage] = useState<Stage>("BOOT");
   const [logs, setLogs] = useState<string[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const addLog = (msg: string) => setLogs(prev => [...prev, `> ${msg}`]);
+  const appendLog = (msg: string) =>
+    setLogs(prev => [
+      ...prev,
+      `[${new Date().toLocaleTimeString()}] ${msg}`,
+    ]);
 
   useEffect(() => {
-    // Inicialización del flujo de audio industrial
-    audioRef.current = new Audio(rdmAudio);
-    audioRef.current.volume = 0.6;
-    audioRef.current.play().catch(() => console.warn("Audio blocked"));
+    // Inicialización de motor sonoro (Sound Design Industrial)
+    audioRef.current = new Audio(rdmIntroAudio);
+    audioRef.current.volume = 0.85;
+    audioRef.current.play().catch(() => {
+      console.warn("Audio Context Restricted");
+    });
 
-    const bootSequence = async () => {
-      await new Promise(r => setTimeout(r, 500));
-      addLog("INITIALIZING NODO_CERO_CORE...");
-      setPhase("SCAN");
-      await new Promise(r => setTimeout(r, 1500));
-      addLog("ESTABLISHING CITEMESH SECURE LINK...");
-      addLog("VERIFYING ID-NVIDA LEDGER INTEGRITY...");
-      setPhase("AUTH");
-      await new Promise(r => setTimeout(r, 2000));
-      addLog("ACCESS_GRANTED: SOVEREIGN_IDENTITY_VERIFIED");
-      setPhase("ACCESS");
-      await new Promise(r => setTimeout(r, 1500));
+    const runSequence = async () => {
+      const wait = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+      appendLog("INITIALIZING NODO_CERO_CORE...");
+      await wait(700);
+      appendLog("LOADING TERRITORIAL_CONTEXT: REAL_DEL_MONTE_HGO_MX");
+      await wait(700);
+      appendLog("HANDSHAKE: CITEMESH_PROTOCOL_VERIFIED");
+      await wait(900);
+      appendLog("CHECKING SOVEREIGN_INFRASTRUCTURE: ONLINE");
+      await wait(900);
+
+      setStage("AUTH");
+      appendLog("DECRYPTING SOVEREIGN_IDENTITY...");
+      await wait(900);
+      appendLog("VALIDATING RDM_OS_SIGNATURE...");
+      await wait(900);
+      appendLog("AUTH_CHANNEL: NODO_CERO → REAL_DEL_MONTE_DIGITAL");
+      await wait(900);
+
+      appendLog("ACCESS_GRANTED: RDM_CIVILIZATORY_ECOSYSTEM");
+      setStage("ACCESS");
+      await wait(1200);
+
       onComplete();
     };
 
-    bootSequence();
+    runSequence();
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black font-mono text-[#D4AF37] flex flex-col p-8 overflow-hidden">
-      {/* Glitch Overlay */}
-      <motion.div 
-        animate={{ opacity: [0.03, 0.05, 0.03] }}
-        transition={{ repeat: Infinity, duration: 0.1 }}
-        className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"
-      />
+    <div className="fixed inset-0 z-[999] bg-[#020202] flex flex-col font-mono overflow-hidden">
+      {/* Noise / glitch overlay */}
+      <div className="pointer-events-none absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.08]" />
 
-      {/* Header Log */}
-      <div className="flex flex-col gap-1 text-[10px] uppercase tracking-widest border-b border-[#D4AF37]/30 pb-4">
-        {logs.map((log, i) => <div key={i}>{log}</div>)}
+      {/* Top Status Bar */}
+      <div className="relative z-20 border-b border-[#D4AF37]/25 px-6 py-4 flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[10px] tracking-[0.35em] text-[#D4AF37]">
+              RDM_OS_V1.0
+            </span>
+          </div>
+          <span className="text-[9px] uppercase text-[#D4AF37]/60 tracking-[0.25em]">
+            NODO_CERO · TERRITORIAL_BOOTSTRAP
+          </span>
+        </div>
+
+        <div className="flex gap-4 text-[9px] uppercase text-[#D4AF37]/60">
+          <span>{STAGE_LABELS[stage]}</span>
+          <span className="flex items-center gap-1">
+            <span className="animate-pulse text-[11px] text-red-500">●</span>
+            LIVE_LINK
+          </span>
+        </div>
       </div>
 
-      {/* Central Portal */}
-      <div className="flex-grow flex items-center justify-center relative">
+      {/* Main content */}
+      <div className="relative z-10 flex-1 flex flex-col justify-center items-center">
         <AnimatePresence mode="wait">
-          {phase === "SCAN" && (
-            <motion.div exit={{ opacity: 0 }} className="flex flex-col items-center">
-              <img src={rdmLogo} className="w-32 h-32 opacity-80 animate-pulse" />
-              <div className="w-48 h-[1px] bg-[#D4AF37] mt-8 animate-scan" />
+          {stage === "BOOT" && (
+            <motion.div
+              key="boot"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="w-full max-w-xl px-6 text-[#D4AF37]/55 text-[11px] space-y-1"
+            >
+              {logs.map((log, i) => (
+                <div key={i} className="flex gap-2">
+                  <span className="text-[#D4AF37]/30">▌</span>
+                  <span>{log}</span>
+                </div>
+              ))}
             </motion.div>
           )}
 
-          {phase === "AUTH" && (
-            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="text-center">
-              <h1 className="text-5xl font-bold tracking-tighter">RDM DIGITAL</h1>
-              <p className="text-[10px] mt-4 tracking-[0.5em]">ESTABLECIENDO CONEXIÓN SOBERANA</p>
+          {stage === "AUTH" && (
+            <motion.div
+              key="auth"
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.98, opacity: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="flex flex-col items-center"
+            >
+              <motion.img
+                src={rdmLogo}
+                className="w-32 h-32 brightness-110 contrast-125 drop-shadow-[0_0_25px_rgba(212,175,55,0.4)]"
+                initial={{ rotate: -4, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+              />
+              <div className="mt-8 text-white font-semibold text-xs tracking-[0.35em]">
+                AUTENTICANDO NODO CERO
+              </div>
+              <div className="mt-3 text-[10px] text-[#D4AF37]/70 tracking-[0.25em] uppercase">
+                REAL_DEL_MONTE · DIGITAL_SOVEREIGN_INFRASTRUCTURE
+              </div>
+            </motion.div>
+          )}
+
+          {stage === "ACCESS" && (
+            <motion.div
+              key="access"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="text-center"
+            >
+              <motion.h1
+                className="text-5xl md:text-6xl font-black tracking-tight text-white"
+                initial={{ letterSpacing: "0.35em" }}
+                animate={{ letterSpacing: "0.05em" }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+              >
+                ACCESS GRANTED
+              </motion.h1>
+              <div className="w-64 h-[2px] bg-[#D4AF37] mt-4 mx-auto" />
+              <p className="mt-4 text-[11px] text-[#D4AF37]/70 tracking-[0.25em] uppercase">
+                REAL_DEL_MONTE DIGITAL · CIVILIZATORY_ECOSYSTEM ONLINE
+              </p>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Footer System Status */}
-      <div className="border-t border-[#D4AF37]/30 pt-4 text-[9px] flex justify-between">
-        <span>ID: NODO_CERO_001</span>
-        <span>STATUS: {phase === "ACCESS" ? "OPERATIONAL" : "INITIALIZING"}</span>
+      {/* Footer */}
+      <div className="relative z-20 border-t border-[#D4AF37]/20 px-6 py-4 text-[9px] text-[#D4AF37]/50 uppercase tracking-[0.2em] flex justify-between">
+        <span>© 2026 NODO CERO · REAL DEL MONTE DIGITAL</span>
+        <span>DEPLOYMENT_STRATEGY_STATUS: {STAGE_LABELS[stage]}</span>
       </div>
-      
-      <style>{`
-        @keyframes scan {
-          0% { transform: translateY(-50px); opacity: 0; }
-          50% { opacity: 1; }
-          100% { transform: translateY(50px); opacity: 0; }
-        }
-        .animate-scan { animation: scan 2s linear infinite; }
-      `}</style>
     </div>
   );
 }
