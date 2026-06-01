@@ -16,6 +16,9 @@ import Rutas from "./pages/Rutas";
 import Comunidad from "./pages/Comunidad";
 import Comercios from "./pages/Comercios";
 import Recorridos from "./pages/Recorridos";
+import Mitos from "./pages/Mitos";
+import Perfil from "./pages/Perfil";
+import RegistrarComercio from "./pages/RegistrarComercio";
 import Dashboard from "./pages/Dashboard";
 import GamePortal from "./pages/GamePortal";
 import B2BPortal from "./pages/B2BPortal";
@@ -56,6 +59,9 @@ const App = () => {
               <Route path="/rutas" element={<Rutas />} />
               <Route path="/recorridos" element={<Recorridos />} />
               <Route path="/comercios" element={<Comercios />} />
+              <Route path="/mitos" element={<Mitos />} />
+              <Route path="/registrar-comercio" element={<RegistrarComercio />} />
+              <Route path="/perfil" element={<Perfil />} />
               <Route path="/comunidad" element={<Comunidad />} />
             </Route>
             {/* Auth */}

@@ -18,6 +18,8 @@ import {
   Store,
   ShieldCheck,
   Activity,
+  Ghost,
+  User as UserIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +34,7 @@ const navItems = [
   { path: "/lugares", label: "Lugares", icon: MapPin },
   { path: "/mapa", label: "Mapa", icon: Navigation },
   { path: "/recorridos", label: "Recorridos", icon: Compass },
+  { path: "/mitos", label: "Mitos", icon: Ghost },
   { path: "/comercios", label: "Comercios", icon: Store },
   { path: "/comunidad", label: "Comunidad", icon: Users },
   { path: "/realito", label: "Realito AI", icon: Bot, type: "advanced" as const },
@@ -222,13 +225,21 @@ export default function FloatingNav() {
 
               {/* Auth */}
               {user ? (
-                <button
-                  onClick={handleLogout}
-                  className="hidden sm:flex items-center gap-1.5 rounded-xl border border-border/30 bg-secondary/30 px-3 py-2 text-[11px] font-body font-medium text-muted-foreground hover:text-foreground hover:border-gold/40 transition-all"
-                >
-                  <LogOut className="h-3.5 w-3.5" />
-                  Salir
-                </button>
+                <div className="hidden sm:flex items-center gap-2">
+                  <NavLink
+                    to="/perfil"
+                    className="flex items-center gap-1.5 rounded-xl border border-gold/30 bg-gold/10 px-3 py-2 text-[11px] font-body font-medium text-gold hover:bg-gold/15 transition-all"
+                  >
+                    <UserIcon className="h-3.5 w-3.5" />
+                    Mi perfil
+                  </NavLink>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-1.5 rounded-xl border border-border/30 bg-secondary/30 px-3 py-2 text-[11px] font-body font-medium text-muted-foreground hover:text-foreground hover:border-gold/40 transition-all"
+                  >
+                    <LogOut className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               ) : (
                 <NavLink
                   to="/auth"
