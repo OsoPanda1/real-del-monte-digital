@@ -1,73 +1,193 @@
-# Welcome to your Lovable project
+# 🚀 TAMV Online - Real del Monte Digital
 
-## Project info
+## Status: ✅ **PRODUCTION READY** (v1.0.0)
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+**Territorial Awareness & Multidimensional Visualization**
+Real del Monte Digital - L0-L7 Federated Architecture
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 📋 What is TAMV?
 
-**Use Lovable**
+**TAMV Online** is a sophisticated, production-ready territorial digital platform implementing a 7-layer federation:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+L7: Quantum-Inspired Feedback Loop (AI Adaptation)
+L6: UX Shell (React Components)
+L5: Domain Services (Identity, Commerce, Telemetry)
+L4: XR/Visual & Spatial (Gen8, Geographic Indexing)
+L3: Guardianship & Observability (Health, Alerts)
+L2: Protocols & Control (Orchestration)
+L1: Memory & Registry (EOCT, MSR, BookPi)
+L0: Doctrine & Ethics (Governance)
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## ⚡ Quick Start (60 seconds)
 
-**Use GitHub Codespaces**
+### Prerequisites
+```bash
+node --version  # v20.0.0+
+npm --version   # v10.0.0+
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Installation
+```bash
+# 1. Clone
+git clone https://github.com/OsoPanda1/real-del-monte-digital.git
+cd real-del-monte-digital
 
-## What technologies are used for this project?
+# 2. Install dependencies
+npm install
 
-This project is built with:
+# 3. Environment setup
+cp .env.example .env.local
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+# 4. Start development
+npm run dev
 
-## How can I deploy this project?
+# 5. Open in browser
+# http://localhost:5173
+```
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## 🧪 Testing
 
-Yes, you can!
+```bash
+npm run test          # Run all tests
+npm run test:watch   # Watch mode
+npm run test:coverage # Coverage report
+npm run validate      # Full validation
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 🐳 Deployment
+
+### Docker
+```bash
+docker build -t tamv-digital .
+docker run -p 3000:3000 tamv-digital
+docker-compose up
+```
+
+### Vercel (Recommended)
+```bash
+vercel link
+vercel deploy --prod
+```
+
+### Self-Hosted
+```bash
+npm run build
+npm run serve:prod
+```
+
+---
+
+## 📚 Documentation
+
+- **`ARCHITECTURE.md`** - Full architecture guide
+- **`DEPLOYMENT.md`** - Deployment & operations
+- **`src/index.ts`** - Core exports
+
+---
+
+## 🎯 Core Features
+
+✅ **L0: Ethical Governance** (EOCT)
+✅ **L1: Audit Trail** (MSR + BookPi)
+✅ **L2: Protocol Engine** (Orchestration)
+✅ **L4: Spatial Indexing** (O(1) queries)
+✅ **L4: Contextual Decisions** (Gen8)
+✅ **L7: AI Feedback Loop** (Quantum-inspired)
+✅ **Event-Driven Architecture**
+✅ **Structured Logging**
+✅ **Production CI/CD**
+✅ **Docker & Kubernetes Ready**
+
+---
+
+## 📊 Observability
+
+```typescript
+// Get metrics
+const metrics = tamvCoordinator.getMetrics();
+
+// Health check
+const health = await tamvCoordinator.health();
+```
+
+---
+
+## 🔐 Security
+
+✅ Ethical rule enforcement
+✅ Immutable audit trail
+✅ Input validation
+✅ Rate limiting ready
+✅ CORS configured
+✅ Type-safe
+
+---
+
+## 📁 Project Structure
+
+```
+src/
+├── core/
+│   ├── types/          # L0-L7 types
+│   ├── logger/         # Logging
+│   ├── event/          # Event system
+│   ├── geo/            # Spatial indexing
+│   ├── ai/             # Feedback loops
+│   └── orchestrator/   # TAMV Coordinator
+├── lib/
+│   └── tamv/           # EOCT, MSR, BookPi, Protocol
+├── config/
+└── index.ts
+```
+
+---
+
+## 🆘 Troubleshooting
+
+```bash
+# Port conflict
+lsof -ti:5173 | xargs kill -9
+
+# Clear cache
+npm cache clean --force
+
+# Reinstall
+rm -rf node_modules && npm install
+```
+
+---
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/OsoPanda1/real-del-monte-digital/issues)
+- **Docs**: See ARCHITECTURE.md
+
+---
+
+## 📜 License
+
+**TAMV Online Enterprise © 2026**
+All rights reserved.
+
+---
+
+## 👤 Author
+
+**Edwin Oswaldo Castillo Trejo** (Anubis Villaseñor)
+ORCID: 0009-0008-5050-1539
+
+---
+
+**Status**: ✅ **PRODUCTION READY**
+**Branch**: `feat/tamv-federation-production`
+**Version**: 1.0.0
