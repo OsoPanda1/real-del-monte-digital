@@ -398,6 +398,124 @@ export type Database = {
           },
         ]
       }
+      music_donations: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          provider: string | null
+          provider_session_id: string | null
+          track_id: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          provider?: string | null
+          provider_session_id?: string | null
+          track_id: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          provider?: string | null
+          provider_session_id?: string | null
+          track_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "music_donations_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "music_tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      music_plays: {
+        Row: {
+          id: string
+          played_at: string
+          track_id: string
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          played_at?: string
+          track_id: string
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          played_at?: string
+          track_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "music_plays_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "music_tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      music_tracks: {
+        Row: {
+          artist: string
+          audio_url: string | null
+          cover_url: string | null
+          created_at: string
+          donation_url: string | null
+          duration_seconds: number | null
+          id: string
+          is_active: boolean | null
+          moods: string[] | null
+          slug: string
+          sort_order: number | null
+          territories: string[] | null
+          title: string
+        }
+        Insert: {
+          artist?: string
+          audio_url?: string | null
+          cover_url?: string | null
+          created_at?: string
+          donation_url?: string | null
+          duration_seconds?: number | null
+          id?: string
+          is_active?: boolean | null
+          moods?: string[] | null
+          slug: string
+          sort_order?: number | null
+          territories?: string[] | null
+          title: string
+        }
+        Update: {
+          artist?: string
+          audio_url?: string | null
+          cover_url?: string | null
+          created_at?: string
+          donation_url?: string | null
+          duration_seconds?: number | null
+          id?: string
+          is_active?: boolean | null
+          moods?: string[] | null
+          slug?: string
+          sort_order?: number | null
+          territories?: string[] | null
+          title?: string
+        }
+        Relationships: []
+      }
       places: {
         Row: {
           category: string
@@ -875,6 +993,42 @@ export type Database = {
           session_id?: string | null
           user_agent?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      trivia_questions: {
+        Row: {
+          category: string | null
+          correct_index: number
+          created_at: string
+          difficulty: string | null
+          explanation: string | null
+          id: string
+          is_active: boolean | null
+          options: string[]
+          question: string
+        }
+        Insert: {
+          category?: string | null
+          correct_index: number
+          created_at?: string
+          difficulty?: string | null
+          explanation?: string | null
+          id?: string
+          is_active?: boolean | null
+          options: string[]
+          question: string
+        }
+        Update: {
+          category?: string | null
+          correct_index?: number
+          created_at?: string
+          difficulty?: string | null
+          explanation?: string | null
+          id?: string
+          is_active?: boolean | null
+          options?: string[]
+          question?: string
         }
         Relationships: []
       }

@@ -19,10 +19,14 @@ import Recorridos from "./pages/Recorridos";
 import Mitos from "./pages/Mitos";
 import Perfil from "./pages/Perfil";
 import RegistrarComercio from "./pages/RegistrarComercio";
+import Music from "./pages/Music";
+import MusicDetail from "./pages/MusicDetail";
+import Juegos from "./pages/Juegos";
 import Dashboard from "./pages/Dashboard";
 import GamePortal from "./pages/GamePortal";
 import B2BPortal from "./pages/B2BPortal";
 import RealitoAI from "./pages/RealitoAI";
+import ControlCenter from "./pages/ControlCenter";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { RouteTracker } from "./modules/tracking/RouteTracker";
@@ -49,7 +53,6 @@ const App = () => {
         <BrowserRouter>
           <RouteTracker />
           <Routes>
-            {/* Public tourism pages with FloatingNav + Footer */}
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Index />} />
               <Route path="/historia" element={<Historia />} />
@@ -63,12 +66,14 @@ const App = () => {
               <Route path="/registrar-comercio" element={<RegistrarComercio />} />
               <Route path="/perfil" element={<Perfil />} />
               <Route path="/comunidad" element={<Comunidad />} />
+              <Route path="/music" element={<Music />} />
+              <Route path="/music/:slug" element={<MusicDetail />} />
+              <Route path="/juegos" element={<Juegos />} />
             </Route>
-            {/* Auth */}
             <Route path="/auth" element={<Auth />} />
-            {/* Admin/OS pages with Sidebar */}
             <Route element={<RdmLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/control" element={<ControlCenter />} />
               <Route path="/game" element={<GamePortal />} />
               <Route path="/b2b" element={<B2BPortal />} />
               <Route path="/realito" element={<RealitoAI />} />
