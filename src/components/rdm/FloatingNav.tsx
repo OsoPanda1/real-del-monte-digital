@@ -20,6 +20,8 @@ import {
   Activity,
   Ghost,
   User as UserIcon,
+  Music as MusicIcon,
+  Gamepad2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -35,11 +37,15 @@ const navItems = [
   { path: "/mapa", label: "Mapa", icon: Navigation },
   { path: "/recorridos", label: "Recorridos", icon: Compass },
   { path: "/mitos", label: "Mitos", icon: Ghost },
+  { path: "/music", label: "Radio", icon: MusicIcon },
+  { path: "/juegos", label: "Juegos", icon: Gamepad2 },
   { path: "/comercios", label: "Comercios", icon: Store },
   { path: "/comunidad", label: "Comunidad", icon: Users },
   { path: "/realito", label: "Realito AI", icon: Bot, type: "advanced" as const },
+  { path: "/control", label: "Control", icon: ShieldCheck, type: "advanced" as const },
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard, type: "advanced" as const },
 ];
+
 
 const scrollThreshold = 80;
 // Ajusta según entorno real
