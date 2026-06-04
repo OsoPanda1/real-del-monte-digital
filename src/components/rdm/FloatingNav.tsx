@@ -36,6 +36,7 @@ const navItems = [
   { path: "/lugares", label: "Lugares", icon: MapPin },
   { path: "/mapa", label: "Mapa", icon: Navigation },
   { path: "/recorridos", label: "Recorridos", icon: Compass },
+  { path: "/ruta-del-paste", label: "Ruta del Paste", icon: Utensils },
   { path: "/mitos", label: "Mitos", icon: Ghost },
   { path: "/music", label: "Radio", icon: MusicIcon },
   { path: "/juegos", label: "Juegos", icon: Gamepad2 },
