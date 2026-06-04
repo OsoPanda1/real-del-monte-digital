@@ -8,3 +8,4 @@ verify_jwt = false
 
 [functions.metrics-aggregates]
 verify_jwt = false
+

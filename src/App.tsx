@@ -19,6 +19,7 @@ import Recorridos from "./pages/Recorridos";
 import Mitos from "./pages/Mitos";
 import Perfil from "./pages/Perfil";
 import RegistrarComercio from "./pages/RegistrarComercio";
+import RutaDelPaste from "./pages/RutaDelPaste";
 import Music from "./pages/Music";
 import MusicDetail from "./pages/MusicDetail";
 import Juegos from "./pages/Juegos";
@@ -60,6 +61,7 @@ const App = () => {
               <Route path="/lugares" element={<Lugares />} />
               <Route path="/mapa" element={<Mapa />} />
               <Route path="/rutas" element={<Rutas />} />
+              <Route path="/ruta-del-paste" element={<RutaDelPaste />} />
               <Route path="/recorridos" element={<Recorridos />} />
               <Route path="/comercios" element={<Comercios />} />
               <Route path="/mitos" element={<Mitos />} />
