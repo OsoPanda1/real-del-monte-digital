@@ -8,7 +8,7 @@ import { track } from "@/core/hooks/useTracking";
 export function RouteTracker() {
   const { pathname } = useLocation();
   useEffect(() => {
-    track({ event_type: "ROUTE_VIEW", route: pathname });
+    track({ event_type: "page_view", route: pathname });
   }, [pathname]);
   return null;
 }
