@@ -1,8 +1,7 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import FloatingNav from "@/components/rdm/FloatingNav";
 import FooterSection from "@/components/rdm/FooterSection";
-
-const sidebarRoutes = ["/dashboard", "/game", "/b2b", "/realito"];
+import DedicationBand from "@/components/rdm/DedicationBand";
 
 export function PublicLayout() {
   return (
@@ -11,7 +10,9 @@ export function PublicLayout() {
       <main>
         <Outlet />
       </main>
+      <DedicationBand />
       <FooterSection />
     </div>
   );
 }
+
