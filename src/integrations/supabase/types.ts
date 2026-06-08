@@ -291,6 +291,39 @@ export type Database = {
         }
         Relationships: []
       }
+      federation_health_log: {
+        Row: {
+          avg_latency_ms: number
+          degraded_count: number
+          id: number
+          integrity: number
+          offline_count: number
+          online_count: number
+          recorded_at: string
+          snapshot: Json
+        }
+        Insert: {
+          avg_latency_ms: number
+          degraded_count: number
+          id?: number
+          integrity: number
+          offline_count: number
+          online_count: number
+          recorded_at?: string
+          snapshot: Json
+        }
+        Update: {
+          avg_latency_ms?: number
+          degraded_count?: number
+          id?: number
+          integrity?: number
+          offline_count?: number
+          online_count?: number
+          recorded_at?: string
+          snapshot?: Json
+        }
+        Relationships: []
+      }
       foot_traffic: {
         Row: {
           business_id: string | null
@@ -515,6 +548,98 @@ export type Database = {
           title?: string
         }
         Relationships: []
+      }
+      paste_pois: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          lat: number | null
+          lng: number | null
+          name: string
+          order_index: number
+          photos: Json | null
+          slug: string
+          svg_x: number
+          svg_y: number
+          type: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name: string
+          order_index?: number
+          photos?: Json | null
+          slug: string
+          svg_x: number
+          svg_y: number
+          type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          order_index?: number
+          photos?: Json | null
+          slug?: string
+          svg_x?: number
+          svg_y?: number
+          type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      paste_ratings: {
+        Row: {
+          created_at: string
+          id: string
+          poi_id: string
+          review: string | null
+          score: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          poi_id: string
+          review?: string | null
+          score: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          poi_id?: string
+          review?: string | null
+          score?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paste_ratings_poi_id_fkey"
+            columns: ["poi_id"]
+            isOneToOne: false
+            referencedRelation: "paste_pois"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       places: {
         Row: {
@@ -750,6 +875,39 @@ export type Database = {
           stripe_subscription_id?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      system_alerts: {
+        Row: {
+          acknowledged: boolean
+          created_at: string
+          federation_key: string | null
+          id: string
+          message: string
+          severity: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          acknowledged?: boolean
+          created_at?: string
+          federation_key?: string | null
+          id?: string
+          message: string
+          severity: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          acknowledged?: boolean
+          created_at?: string
+          federation_key?: string | null
+          id?: string
+          message?: string
+          severity?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1029,6 +1187,51 @@ export type Database = {
           is_active?: boolean | null
           options?: string[]
           question?: string
+        }
+        Relationships: []
+      }
+      wiki_articles: {
+        Row: {
+          category: string
+          content_md: string
+          created_at: string
+          excerpt: string | null
+          hero_image: string | null
+          id: string
+          order_index: number
+          published: boolean
+          slug: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          content_md: string
+          created_at?: string
+          excerpt?: string | null
+          hero_image?: string | null
+          id?: string
+          order_index?: number
+          published?: boolean
+          slug: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          content_md?: string
+          created_at?: string
+          excerpt?: string | null
+          hero_image?: string | null
+          id?: string
+          order_index?: number
+          published?: boolean
+          slug?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
