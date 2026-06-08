@@ -28,6 +28,8 @@ import GamePortal from "./pages/GamePortal";
 import B2BPortal from "./pages/B2BPortal";
 import RealitoAI from "./pages/RealitoAI";
 import ControlCenter from "./pages/ControlCenter";
+import Wiki from "./pages/Wiki";
+import LTOS from "./pages/LTOS";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { RouteTracker } from "./modules/tracking/RouteTracker";
@@ -71,6 +73,8 @@ const App = () => {
               <Route path="/music" element={<Music />} />
               <Route path="/music/:slug" element={<MusicDetail />} />
               <Route path="/juegos" element={<Juegos />} />
+              <Route path="/wiki" element={<Wiki />} />
+              <Route path="/ltos" element={<LTOS />} />
             </Route>
             <Route path="/auth" element={<Auth />} />
             <Route element={<RdmLayout />}>

@@ -1,26 +1,38 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
-    <title>Lovable App</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
 
-    <!-- TODO: Update og:title to match your application name -->
-    <meta property="og:title" content="Lovable App" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <title>RDM Digital · Sistema Operativo Territorial de Real del Monte</title>
+    <meta name="description" content="LTOS Nodo Cero: turismo, economía, cultura y gobernanza digital soberana para Real del Monte. Ruta del Paste, Wiki, Control Center y Radio en vivo." />
+    <meta name="author" content="RDM Digital · Oveja Negra Studios" />
+    <meta name="keywords" content="Real del Monte, Pueblo Mágico, Paste, LTOS, TAMV, Hidalgo, turismo digital, soberanía tecnológica" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="RDM Digital · Nodo Cero LTOS Territorial" />
+    <meta property="og:description" content="El primer Sistema Operativo Territorial Soberano del mundo, activo en Real del Monte." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:site_name" content="RDM Digital" />
 
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:title" content="RDM Digital · LTOS Nodo Cero" />
+    <meta name="twitter:description" content="Real del Monte, Sistema Operativo Territorial Soberano." />
+
+    <!-- Hardening (CSP intencionalmente permisiva para Lovable preview + Supabase + GPT-Eng) -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.gpteng.co https://*.lovable.app https://*.lovable.dev; style-src 'self' 'unsafe-inline' https: data:; font-src 'self' https: data:; img-src 'self' https: data: blob:; media-src 'self' https: data: blob:; connect-src 'self' https: wss:; frame-ancestors 'self' https://*.lovable.app https://*.lovable.dev;" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="Permissions-Policy" content="geolocation=(self), microphone=(), camera=()" />
+
+    <link rel="canonical" href="https://rdm-digital.lovable.app/" />
   </head>
 
   <body>
     <div id="root"></div>
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

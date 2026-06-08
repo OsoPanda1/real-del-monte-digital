@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
-import { Users, Zap, Database, Clock, TrendingUp, Shield, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Zap, Clock, Shield, AlertTriangle, CheckCircle2 } from "lucide-react";
 import Telemetry from "@/modules/control/Telemetry";
+import HealthSparkline from "@/modules/control/HealthSparkline";
+import AlertsPanel from "@/modules/control/AlertsPanel";
 import { useFederationHealth } from "@/modules/control/useFederationHealth";
 
 const statusColor = (s: string) =>
@@ -28,13 +30,13 @@ export default function ControlCenter() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold/15">
               <Shield className="h-5 w-5 text-gold" />
             </div>
-            <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-gold/70">Control Center · RDM-TOS · Health real</p>
+            <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-gold/70">Control Center · RDM-TOS · Mini-Grafana Soberano</p>
           </div>
           <h1 className="text-5xl md:text-6xl font-display font-bold tracking-tight">
             Sistema Operativo <span className="text-gradient-gold italic">Territorial Soberano</span>
           </h1>
           <p className="mt-3 text-sm font-body text-muted-foreground max-w-xl">
-            Nodo Cero · Real del Monte. Monitoreo del kernel TAMV en tiempo real con health-check directos a Supabase y Edge.
+            Nodo Cero · Real del Monte. Health-check + histórico + alertas con umbrales auditables, sin dependencias externas.
           </p>
         </motion.div>
 
@@ -62,6 +64,16 @@ export default function ControlCenter() {
             </motion.div>
           ))}
         </div>
+
+        <div className="glass-card rounded-2xl p-5 border border-border/20">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">Integridad I_TAMV · últimas 30 lecturas</h2>
+            <span className="text-[10px] font-mono text-muted-foreground/60">refresh 15s</span>
+          </div>
+          <HealthSparkline />
+        </div>
+
+        <AlertsPanel />
 
         <div className="glass-card rounded-2xl p-5 border border-border/20">
           <div className="flex items-center justify-between mb-4">

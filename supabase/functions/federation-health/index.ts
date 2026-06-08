@@ -132,9 +132,21 @@ Deno.serve(async (req) => {
   const offline = checks.filter((c) => c.status === "offline").length;
   const integrity = Math.max(0, Math.min(1, (online + degraded * 0.5) / checks.length));
 
-  return new Response(JSON.stringify({
+  const payload = {
     timestamp: new Date().toISOString(),
     summary: { online, degraded, offline, total: checks.length, avg_latency_ms: avgLatency, integrity: Number(integrity.toFixed(2)) },
     federations: checks,
-  }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  };
+
+  // Persistir histórico para sparklines / alertas (fire-and-forget)
+  supa.from("federation_health_log").insert({
+    avg_latency_ms: avgLatency,
+    integrity: Number(integrity.toFixed(2)),
+    online_count: online,
+    degraded_count: degraded,
+    offline_count: offline,
+    snapshot: payload,
+  }).then(() => {}, () => {});
+
+  return new Response(JSON.stringify(payload), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
 });

@@ -9,3 +9,10 @@ verify_jwt = false
 [functions.metrics-aggregates]
 verify_jwt = false
 
+[functions.federation-health]
+verify_jwt = false
+
+[functions.alerts-engine]
+verify_jwt = false
+
+
