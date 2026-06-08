@@ -1,120 +1,117 @@
-## Plan de evolución AAA — Real del Monte Digital
 
-Vamos a transformar la plataforma en una experiencia inmersiva completa con monetización clara y lógica de negocio sostenible. Trabajaremos en 6 bloques.
+# Sprint Final RDM Digital LTOS — Presentación Municipal
 
----
-
-### Bloque 1 — Sidebar (`AppSidebar.tsx`) y FloatingNav (`FloatingNav.tsx`)
-
-Aplicaré los rediseños que propones:
-
-- **AppSidebar**: animación spring (260/26), ancho expandido 256 / colapsado 76, logo con glow dorado en hover, branding "RDM DIGITAL · TAMV MD‑X5", botón "Volver al portal público", indicador `activeGlow` con `layoutId`, badge "activo" en ítem activo, status "Instancia soberana activa · Sesión cifrada · Nodo MD‑X5".
-- **FloatingNav**: header flotante con efecto `scrolled` (>80px), logo `rdm-logo.png`, 7 ítems principales (Inicio, Historia, Gastronomía, Lugares, Mapa, Rutas, Comunidad), Dashboard y Realito en menú secundario, botón Auth (Entrar/Salir) con `supabase.auth.onAuthStateChange`, menú móvil deslizante.
+Mañana es la demo. Tienes 5 créditos. Este plan está optimizado para entregar **una plataforma funcional, sólida y presentable** en la menor cantidad de turnos posibles, ejecutando TODO dentro de Lovable (sin migrar a Vercel/Next.js 15).
 
 ---
 
-### Bloque 2 — Home (`Index.tsx`) reconstruida
+## Decisión de arquitectura (clave)
 
-Página de bienvenida cinematográfica con secciones redireccionables:
+**Mantenemos Lovable + React/Vite + Lovable Cloud (Supabase).** La visión LTOS del blueprint (Next.js 15, Vercel, Istio, Kubernetes, Terraform) es post-MVP. Para la demo municipal lo que importa es:
 
-1. **Hero inmersivo** — fondo aerial con Ken Burns, título "Real del Monte · Pueblo Mágico Digital", subtítulo invitación a la aventura, CTA dual "Iniciar aventura" / "Explorar mapa".
-2. **Grid de secciones** (cards con imagen + hover parallax): Historia, Cultura, Gastronomía, Mitos y Leyendas, Recorridos, Eventos.
-3. **Mapa en tiempo real** embebido (preview de Leaflet centrado en RDM con 5 markers destacados + CTA "Abrir mapa completo").
-4. **Sitios de interés** — carrusel con Museos, Minas, Miradores.
-5. **Eventos próximos** — timeline vertical con próximos 3 eventos.
-6. **Catálogo de comercios premium** — grid con solo comercios `is_subscribed = true`.
-7. **Recorridos guiados** — 3 paquetes destacados con precio y CTA reservar.
-8. **Veta Soberana (gamificación)** — banner con CTA "Activar Premium".
-9. **Realito AI** — banner con CTA chat.
+- Que **funcione en vivo** sin caerse.
+- Que se **vea soberano y elegante** (ya está).
+- Que los **datos sean reales** (no mocks visibles).
+- Que el **Control Center muestre health real**.
+- Que la narrativa "Orgullosamente Realmontenses" cierre cada pantalla.
+
+Los repos/ZIPs externos NO se absorben literalmente (riesgo de romper todo a 24h de la demo). En su lugar: **extraigo conceptos, esquemas y rutas faltantes** y los re-implemento limpios sobre la base actual.
 
 ---
 
-### Bloque 3 — Mapa visual mejorado (`Mapa.tsx`)
+## Lo que se hace (en un solo turno de build)
 
-- Tile layer **CartoDB Voyager** (más legible y cálido) con overlay de gradiente dorado sutil.
-- Markers SVG personalizados por categoría con halo pulsante (animación CSS).
-- Mini-card flotante con imagen del lugar, rating, schedule y CTA "Cómo llegar".
-- Panel lateral colapsable con lista filtrable sincronizada con markers.
-- Leyenda con contadores en vivo.
-- Botón "Centrar en RDM" + "Mi ubicación".
-- Sólo lugares/comercios `is_active = true` y comercios `is_subscribed = true`.
+### 1. Ruta del Paste con datos reales desde Supabase
+- Nueva tabla `paste_pois` (nombre, descripción, lat/lng, coordenadas SVG x/y, orden, rating promedio, fotos).
+- Tabla `paste_ratings` (user_id, poi_id, score 1-5, reseña).
+- Seed con los 6 puntos actuales del SVG.
+- Hook `usePasteRoute()` que carga POIs + agrega ratings dinámicos.
+- `RutaDelPasteSVG.tsx` renderiza desde Supabase (no hardcoded), con badges de rating en vivo y modal para puntuar (solo usuarios autenticados).
+
+### 2. Control Center → Telemetría real estilo Grafana/Prometheus
+- En lugar de instalar Prometheus (imposible en Lovable), construyo un **mini-Grafana nativo**:
+  - Nueva tabla `federation_health_log` que persiste cada snapshot del edge function `federation-health` (histórico 24h).
+  - Edge function `federation-health` ahora también escribe en esa tabla en cada llamada.
+  - Edge function nueva `alerts-engine`: lee la tabla, evalúa umbrales (latencia > 500ms, integrity < 0.7, offline > 0) y genera alertas en tabla `system_alerts`.
+  - En `ControlCenter.tsx`: agrego **sparklines reales** por federación (últimas 30 lecturas) y panel de **alertas activas** con severidad.
+  - Umbrales configurables en código (constants), exportables.
+
+### 3. Hardening web producción
+- **Frontend:**
+  - `index.html`: meta CSP estricta (script-src self + lovable CDN, connect-src supabase + lovable), HSTS hint, referrer-policy, X-Frame-Options sim vía meta, permissions-policy.
+  - Inputs sanitizados en formularios (RegistrarComercio, ratings, comentarios) con Zod.
+  - CSRF: Supabase ya usa JWT bearer (no cookies), por lo que CSRF clásico no aplica; documento esto en `SECURITY.md`.
+- **Backend (edge functions):**
+  - Helper `withSecurity()` reutilizable: valida origen, rate-limit por IP en memoria (60 req/min), valida JWT cuando aplica, headers CORS estrictos (no `*` cuando hay credenciales).
+  - Aplicado a: `ingest-event`, `metrics-aggregates`, `federation-health`, `alerts-engine`, `chat`, `create-commerce-checkout`, `create-premium-checkout`.
+- **DB:** revisión rápida de RLS en tablas nuevas; grants explícitos.
+
+### 4. Absorción "lógica" de la visión LTOS (no copia de repos)
+De los Tomos del blueprint y de los 2 .docx adjuntos, integro los **módulos viables en Lovable**:
+- `/wiki` — RDMLAWIKI: página nueva tipo enciclopedia editorial con secciones de Historia, Leyendas, Personajes, Minería, Cornish heritage. Datos seed en tabla `wiki_articles`.
+- `/ltos` — Manifiesto LTOS Territorial: landing soberana explicando los 7 ejes (Identidad, Ledger, Edge, Nexus, Neural, Media, Twin 4D) con el cálculo I_TAMV.
+- Ajustes en `FloatingNav` para incluir Wiki y LTOS.
+
+### 5. Pulido visual final demo-ready
+- `DedicationBand` actualizado con efecto shimmer platino.
+- Página `Index` (home): hero con KPIs reales en vivo (places, businesses, eventos, tracks) leídos desde Supabase.
+- Loading states elegantes (skeleton dorado) en todas las páginas con fetch.
+- Favicon + meta tags (og:title, og:description, twitter:card) para que se vea bien cuando lo compartan.
+
+### 6. Pre-vuelo de despliegue
+- Verifico build sin errores TS.
+- Confirmo edge functions desplegadas.
+- Smoke check de health endpoint.
+- Aviso final con checklist de demo (URL, credenciales test, recorrido sugerido).
 
 ---
 
-### Bloque 4 — Catálogo de Comercios + Recorridos guiados (esquema BD)
+## Lo que NO se hace (y por qué)
 
-Migración SQL para añadir lógica de negocio:
-
-**Tablas nuevas:**
-- `commerce_subscriptions` (business_id, plan: 'mensual'|'trimestral', amount, status, started_at, expires_at)
-- `tour_guides` (name, bio, languages[], avatar_url, rating, is_active)
-- `tour_packages` (title, description, duration_min, price, max_capacity, image_url, includes[])
-- `tour_availability` (package_id, guide_id, date, time, capacity_left)
-- `tour_bookings` (user_id, package_id, availability_id, persons, total_paid, status: 'pendiente'|'confirmada'|'completada')
-- `events` (title, description, date, location, image_url, category)
-- `rewards` (title, description, business_id, type: 'descuento'|'producto'|'experiencia', value, stock, points_cost)
-- `reward_redemptions` (user_id, reward_id, code, redeemed_at, used_at)
-
-**Páginas nuevas:**
-- `/comercios` — grid de comercios suscritos con filtros por sector.
-- `/recorridos` (refactor de Rutas o nueva) — listado de paquetes + flujo reserva (fecha/hora/personas).
-- `/eventos` — calendario de eventos.
+| Pedido | Por qué no | Alternativa |
+|---|---|---|
+| Migrar a Next.js 15 / Vercel | Refactor de 3-5 días, rompe demo | Lovable hosting (mismo dominio público) |
+| Instalar Grafana/Prometheus reales | Lovable no corre infra K8s | Mini-dashboard nativo con sparklines + alertas en DB |
+| Absorber 5+ repos ZIP literalmente | Conflictos de schema y design system irresolubles en 1 turno | Extraer conceptos y re-implementar sobre base actual |
+| CSRF tokens clásicos | Stack es JWT bearer, no cookies — no aplica | Documentado en SECURITY.md |
+| Rate-limit de infraestructura | No hay primitiva en Lovable backend | Rate-limit ad-hoc en memoria por edge function (aceptado riesgo) |
 
 ---
 
-### Bloque 5 — Realito AI con filtrado estricto
-
-Modifico `supabase/functions/chat/index.ts`:
-
-- Antes de responder, consulta tablas `places (is_active=true)`, `businesses (is_subscribed=true AND is_active=true)`, `events`, `tour_packages`.
-- Inyecta el catálogo filtrado en el `system prompt` como contexto.
-- System prompt refuerza: **"Solo puedes recomendar lugares y comercios que aparecen en el catálogo proporcionado. Si te preguntan por un comercio que no está en la lista, indica que no está registrado oficialmente en RDM Digital."**
-
----
-
-### Bloque 6 — Gamificación Veta Soberana con economía sostenible
-
-**Fórmula de sostenibilidad:**
+## Detalle técnico
 
 ```text
-Ingreso mensual = (Σ Premium suscripciones × $99) + (Σ Comercios × $cuota) + (comisión 15% bookings)
-Costo de premios = Σ rewards canjeados × valor real
-Margen objetivo = Ingreso − Costo ≥ 40%
+NUEVO
+├── supabase/migrations/<ts>_paste_wiki_alerts.sql
+│   ├── paste_pois, paste_ratings
+│   ├── wiki_articles
+│   ├── federation_health_log
+│   └── system_alerts
+├── supabase/functions/alerts-engine/index.ts
+├── supabase/functions/_shared/security.ts   ← withSecurity()
+├── src/modules/paste-route/usePasteRoute.ts
+├── src/modules/paste-route/RatingModal.tsx
+├── src/modules/control/HealthSparkline.tsx
+├── src/modules/control/AlertsPanel.tsx
+├── src/pages/Wiki.tsx
+├── src/pages/LTOS.tsx
+└── SECURITY.md
 
-Reglas:
-- Premium MXN $99/mes desbloquea minería + canje
-- Cada reward tiene `points_cost` calculado: points = (valor_MXN / 0.30) 
-  (techo: el usuario debe minar el equivalente al 70% del valor para canjear → margen 30% para plataforma)
-- Stock limitado por reward (controla exposure)
-- Cooldown de 24h entre canjes
-- Comercio aporta el premio a cambio de visibilidad + tráfico (no costo directo a plataforma)
+MODIFICADO
+├── src/modules/paste-route/RutaDelPasteSVG.tsx   (data-driven)
+├── src/pages/ControlCenter.tsx                    (sparklines + alertas)
+├── src/pages/Index.tsx                            (KPIs reales)
+├── src/components/rdm/FloatingNav.tsx             (+ wiki, ltos)
+├── src/components/rdm/DedicationBand.tsx          (shimmer)
+├── src/App.tsx                                    (+ rutas)
+├── index.html                                     (CSP/HSTS/OG)
+└── supabase/functions/federation-health/index.ts  (persiste histórico)
 ```
 
-**Implementación:**
-- Tabla `subscriptions_premium` (user_id, status, started_at, expires_at, amount).
-- En `GamePortal.tsx`: gating — si `!isPremium` muestra paywall con CTA Stripe.
-- Tabla `rewards` con `points_cost` autocalculado.
-- Página `/recompensas` con catálogo canjeable (filtra por puntos del usuario).
-- Trigger SQL que descuenta `total_minerals` y crea `reward_redemption` con código único.
-
-**Pagos**: integraremos **Stripe** built-in para Premium ($99/mes), suscripción de comercios ($499/mes o $1,299/trim) y bookings de recorridos. Stripe se habilita en una segunda fase tras tu confirmación.
+Costo estimado: **1–2 turnos de build** (deja 3+ créditos de margen para ajustes en vivo mañana).
 
 ---
 
-### Orden de ejecución (esta iteración)
+## Pregunta única antes de ejecutar
 
-Para no romper nada y entregar valor incremental, esta iteración cubre:
-
-1. **AppSidebar** + **FloatingNav** rediseñados (los snippets que pasaste, completados y funcionales).
-2. **Home** reconstruida con las 9 secciones (datos mock donde aún no hay BD; reales donde ya existe).
-3. **Mapa** con tiles Voyager, markers SVG con halo, panel lateral, mini-card mejorada.
-4. **Migración BD**: tablas commerce_subscriptions, tour_guides, tour_packages, tour_availability, tour_bookings, events, rewards, reward_redemptions, subscriptions_premium + RLS + datos seed.
-5. **Realito AI** con filtrado estricto de catálogo.
-6. **Página `/comercios`** y **`/recorridos`** funcionales (sin pago real aún, botón "Reservar" crea booking en `pendiente`).
-7. **GamePortal** con paywall + catálogo de recompensas con fórmula sostenible.
-
-**Diferido a próxima iteración (requiere tu aprobación):**
-- Activar **Stripe payments** built-in (Premium, comercios, bookings) — lo haremos cuando confirmes.
-- Panel admin para que comercios suban su info y elijan plan.
-
-¿Apruebas este plan para comenzar?
+¿Apruebo este plan tal cual y procedo, o quieres que prioricé/recortara algo específico (por ejemplo: saltar Wiki para enfocar todo en Control Center + Ruta del Paste)?
